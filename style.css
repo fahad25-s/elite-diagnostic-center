@@ -1,3 +1,4 @@
+```css
 body {
     font-family: Arial, sans-serif;
     text-align: center;
@@ -26,99 +27,184 @@ body {
     margin-top: 20px;
 }
 
-/* স্ক্রিনে টিকেট লুকানো থাকবে */
+
+/* =====================================================
+   PRINT TICKET
+   SIZE: 3.5" x 3.5"
+   ===================================================== */
+
 .printable {
     display: none;
 }
 
-/* ৩.৫" x ৩.৫" স্কয়ার সাইজ সিএসএস (১ পেজ ফিক্স) */
+
 @media print {
+
+    /* -----------------------------------------------
+       PAPER SIZE
+       ----------------------------------------------- */
+
     @page {
         size: 3.5in 3.5in;
         margin: 0;
     }
 
-    html, body {
+
+    /* -----------------------------------------------
+       BASIC PAGE
+       ----------------------------------------------- */
+
+    html,
+    body {
         width: 3.5in;
-        height: 3.5in;
-        margin: 0;
-        padding: 0;
-        background-color: #fff;
-        overflow: hidden; /* অতিরিক্ত স্পেস যাতে নতুন পেজ না তৈরি করে */
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff;
     }
 
-    body * {
-        visibility: hidden;
+
+    /* -----------------------------------------------
+       SCREEN KIOSK HIDE
+       ----------------------------------------------- */
+
+    .kiosk-container {
+        display: none !important;
     }
 
-    .printable, .printable * {
-        visibility: visible;
-    }
 
-    /* ১ পেজে নিখুঁতভাবে ফিট করার জন্য লেআউট */
+    /* -----------------------------------------------
+       TICKET
+       ----------------------------------------------- */
+
     .printable {
         display: flex !important;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
+
         width: 3.5in;
-        height: 3.2in; /* উচ্চতা ৩.২ ইঞ্চি করা হয়েছে যাতে মার্জিনের কারণে ২nd পেজ না আসে */
-        padding: 0.15in 0.2in;
+        height: 3.5in;
+
+        margin: 0 !important;
+        padding: 0.18in 0.20in;
+
         box-sizing: border-box;
+
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+
         text-align: center;
-        margin: 0 auto;
-        page-break-after: avoid; /* পেজ ব্রেক বন্ধ করা */
-        page-break-inside: avoid;
+
+        overflow: hidden;
+
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+
+        break-before: avoid !important;
+        break-after: avoid !important;
+        break-inside: avoid !important;
     }
 
-    /* হেডার সেকশন */
+
+    /* -----------------------------------------------
+       HEADER
+       ----------------------------------------------- */
+
     .header-section {
         width: 100%;
+        flex-shrink: 0;
     }
 
     .brand-title {
         font-size: 13px;
         font-weight: bold;
-        margin: 0 0 2px 0;
-        line-height: 1.2;
+
+        margin: 0 0 3px 0;
+
+        line-height: 1.15;
     }
 
-    .address, .phone {
-        font-size: 10px;
+    .address {
+        font-size: 9px;
+
         margin: 1px 0;
+
+        line-height: 1.15;
+
         color: #333;
     }
 
-    /* সিরিয়াল নম্বর সেকশন */
+    .phone {
+        font-size: 9px;
+
+        margin: 1px 0;
+
+        line-height: 1.15;
+
+        color: #333;
+    }
+
+
+    /* -----------------------------------------------
+       SERIAL NUMBER - CENTER
+       ----------------------------------------------- */
+
     .serial-section {
-        margin: auto 0;
+        width: 100%;
+
+        flex: 1;
+
+        display: flex;
+        flex-direction: column;
+
+        justify-content: center;
+        align-items: center;
+
+        min-height: 0;
     }
 
     .serial-label {
         font-size: 11px;
-        margin: 0 0 2px 0;
+
+        margin: 0 0 5px 0;
+
+        line-height: 1;
     }
 
     #ticket-number {
         font-size: 42px;
         font-weight: 900;
+
         margin: 0;
+
         line-height: 1;
     }
 
-    /* ফুটার সেকশন */
+
+    /* -----------------------------------------------
+       FOOTER
+       ----------------------------------------------- */
+
     .footer-section {
         width: 100%;
+
+        flex-shrink: 0;
     }
 
     .time-stamp {
-        font-size: 10px;
-        margin: 0 0 2px 0;
+        font-size: 9px;
+
+        margin: 0 0 3px 0;
+
+        line-height: 1.1;
     }
 
     .thank-you {
-        font-size: 11px;
+        font-size: 10px;
         font-weight: bold;
+
         margin: 0;
+
+        line-height: 1.1;
     }
 }
+```
