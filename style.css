@@ -1,42 +1,74 @@
-```css
+/* =====================================================
+   SCREEN / KIOSK
+   ===================================================== */
+
 body {
     font-family: Arial, sans-serif;
     text-align: center;
     background-color: #f4f4f9;
+
     margin: 0;
     padding: 20px;
 }
 
 .kiosk-container {
+    width: 100%;
     margin-top: 30px;
+    text-align: center;
 }
 
 .kiosk-container h1 {
     color: #333;
     font-size: 26px;
+    margin-bottom: 15px;
 }
 
-#printBtn {
-    background-color: #007bff;
-    color: white;
-    font-size: 24px;
-    padding: 18px 36px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 20px;
+.kiosk-container p {
+    margin: 8px 0;
 }
 
 
 /* =====================================================
-   PRINT TICKET
-   SIZE: 3.5" x 3.5"
+   PRINT BUTTON
+   ===================================================== */
+
+#printBtn {
+    display: block;
+
+    background-color: #007bff;
+    color: white;
+
+    font-size: 24px;
+
+    padding: 18px 36px;
+
+    border: none;
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    margin: 20px auto 0;
+}
+
+#printBtn:hover {
+    background-color: #0069d9;
+}
+
+
+/* =====================================================
+   TICKET
+   SCREEN-এ HIDDEN
    ===================================================== */
 
 .printable {
     display: none;
 }
 
+
+/* =====================================================
+   PRINT SETTINGS
+   TICKET SIZE = 3.5" × 3.5"
+   ===================================================== */
 
 @media print {
 
@@ -51,20 +83,22 @@ body {
 
 
     /* -----------------------------------------------
-       BASIC PAGE
+       PRINT BODY
        ----------------------------------------------- */
 
     html,
     body {
-        width: 3.5in;
+        width: 100%;
         margin: 0 !important;
         padding: 0 !important;
+
         background: #ffffff;
     }
 
 
     /* -----------------------------------------------
-       SCREEN KIOSK HIDE
+       KIOSK SCREEN HIDE
+       Print করার সময় এগুলো আসবে না
        ----------------------------------------------- */
 
     .kiosk-container {
@@ -73,7 +107,7 @@ body {
 
 
     /* -----------------------------------------------
-       TICKET
+       TICKET CONTAINER
        ----------------------------------------------- */
 
     .printable {
@@ -88,13 +122,16 @@ body {
         box-sizing: border-box;
 
         flex-direction: column;
+
         align-items: center;
+
         justify-content: space-between;
 
         text-align: center;
 
         overflow: hidden;
 
+        /* Extra page prevent */
         page-break-before: avoid !important;
         page-break-after: avoid !important;
         page-break-inside: avoid !important;
@@ -111,17 +148,23 @@ body {
 
     .header-section {
         width: 100%;
+
         flex-shrink: 0;
+
+        text-align: center;
     }
+
 
     .brand-title {
         font-size: 13px;
+
         font-weight: bold;
 
         margin: 0 0 3px 0;
 
         line-height: 1.15;
     }
+
 
     .address {
         font-size: 9px;
@@ -132,6 +175,7 @@ body {
 
         color: #333;
     }
+
 
     .phone {
         font-size: 9px;
@@ -145,7 +189,8 @@ body {
 
 
     /* -----------------------------------------------
-       SERIAL NUMBER - CENTER
+       SERIAL NUMBER
+       EXACT CENTER
        ----------------------------------------------- */
 
     .serial-section {
@@ -153,14 +198,19 @@ body {
 
         flex: 1;
 
+        min-height: 0;
+
         display: flex;
+
         flex-direction: column;
 
         justify-content: center;
+
         align-items: center;
 
-        min-height: 0;
+        text-align: center;
     }
+
 
     .serial-label {
         font-size: 11px;
@@ -170,8 +220,10 @@ body {
         line-height: 1;
     }
 
+
     #ticket-number {
         font-size: 42px;
+
         font-weight: 900;
 
         margin: 0;
@@ -188,7 +240,10 @@ body {
         width: 100%;
 
         flex-shrink: 0;
+
+        text-align: center;
     }
+
 
     .time-stamp {
         font-size: 9px;
@@ -198,13 +253,15 @@ body {
         line-height: 1.1;
     }
 
+
     .thank-you {
         font-size: 10px;
+
         font-weight: bold;
 
         margin: 0;
 
         line-height: 1.1;
     }
+
 }
-```
