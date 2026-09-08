@@ -31,11 +31,11 @@ body {
     display: none;
 }
 
-/* ৩.৫" x ৩.৫" স্কয়ার সাইজ সিএসএস */
+/* ৩.৫" x ৩.৫" স্কয়ার সাইজ সিএসএস (১ পেজ ফিক্স) */
 @media print {
     @page {
-        size: 3.5in 3.5in; /* চওড়া ৩.৫ ইঞ্চি, দৈর্ঘ্য ৩.৫ ইঞ্চি */
-        margin: 0;         /* মার্জিন জিরো যাতে পুরো ৩.৫ ইঞ্চি জায়গা পাওয়া যায় */
+        size: 3.5in 3.5in;
+        margin: 0;
     }
 
     html, body {
@@ -44,6 +44,7 @@ body {
         margin: 0;
         padding: 0;
         background-color: #fff;
+        overflow: hidden; /* অতিরিক্ত স্পেস যাতে নতুন পেজ না তৈরি করে */
     }
 
     body * {
@@ -54,17 +55,20 @@ body {
         visibility: visible;
     }
 
-    /* ৩.৫ x ৩.৫ বক্স লেআউট */
+    /* ১ পেজে নিখুঁতভাবে ফিট করার জন্য লেআউট */
     .printable {
         display: flex !important;
         flex-direction: column;
-        justify-content: space-between; /* হেডার উপরে, ফুটার নিচে, মাঝখানে সিরিয়াল */
+        justify-content: space-between;
         align-items: center;
         width: 3.5in;
-        height: 3.5in; /* নিখুঁত ৩.৫ ইঞ্চি স্কয়ার বর্ডার */
-        padding: 0.25in; /* চারপাশে চারভাগের এক ইঞ্চি সেফ মার্জিন */
+        height: 3.2in; /* উচ্চতা ৩.২ ইঞ্চি করা হয়েছে যাতে মার্জিনের কারণে ২nd পেজ না আসে */
+        padding: 0.15in 0.2in;
         box-sizing: border-box;
         text-align: center;
+        margin: 0 auto;
+        page-break-after: avoid; /* পেজ ব্রেক বন্ধ করা */
+        page-break-inside: avoid;
     }
 
     /* হেডার সেকশন */
@@ -73,9 +77,9 @@ body {
     }
 
     .brand-title {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: bold;
-        margin: 0 0 3px 0;
+        margin: 0 0 2px 0;
         line-height: 1.2;
     }
 
@@ -85,18 +89,18 @@ body {
         color: #333;
     }
 
-    /* সিরিয়াল নম্বর সেকশন (স্কয়ার পেজের ঠিক মাঝখানে) */
+    /* সিরিয়াল নম্বর সেকশন */
     .serial-section {
         margin: auto 0;
     }
 
     .serial-label {
-        font-size: 12px;
+        font-size: 11px;
         margin: 0 0 2px 0;
     }
 
     #ticket-number {
-        font-size: 35px; /* ৩.৫ ইঞ্চি বক্সের জন্য স্পষ্ট ও উপযুক্ত সাইজ */
+        font-size: 42px;
         font-weight: 900;
         margin: 0;
         line-height: 1;
