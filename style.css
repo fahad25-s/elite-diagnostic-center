@@ -7,30 +7,35 @@ body {
 }
 
 .kiosk-container {
-    margin-top: 50px;
+    margin-top: 30px;
+}
+
+.kiosk-container h1 {
+    color: #333;
+    font-size: 26px;
 }
 
 #printBtn {
     background-color: #007bff;
     color: white;
     font-size: 24px;
-    padding: 20px 40px;
+    padding: 18px 36px;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
+    margin-top: 20px;
 }
 
-/* টিকেট প্রিন্ট টেমপ্লেট সাধারণ স্ক্রিনে লুকানো থাকবে */
+/* স্ক্রিনে টিকেট লুকানো থাকবে */
 .printable {
     display: none;
 }
 
-/* প্রিন্ট করার সময়ের সিএসএস (Thermal Printer-এর জন্য) */
+/* প্রিন্ট করার সময়ের জন্য সিএসএস (Media Print) */
 @media print {
-    /* পেজের সাইজ থার্মাল রোলের সাইজে নির্ধারণ করা */
     @page {
-        size: 80mm auto; /* ৮টি মিমি থার্মাল রোলের জন্য (কম হলে 58mm দিন) */
-        margin: 0;       /* মার্জিন বাদ দেওয়া যাতে লেখা কেটে না যায় */
+        size: letter; /* বর্তমানে সেট করা সাইজ অনুযায়ী */
+        margin: 0;
     }
 
     body {
@@ -39,12 +44,10 @@ body {
         background-color: #fff;
     }
 
-    /* স্ক্রিনের অন্যান্য বোতাম ও টেক্সট লুকানো */
     body * {
         visibility: hidden;
     }
 
-    /* শুধু টিকেট অংশ দৃশ্যমান ও থার্মাল সাইজে সেট করা */
     .printable, .printable * {
         visibility: visible;
     }
@@ -53,10 +56,56 @@ body {
         display: block !important;
         position: absolute;
         left: 0;
-        top: 0;
-        width: 100%;      /* পেজের পুরো প্রস্থ জুড়ে থাকবে */
-        padding: 5mm;     /* সাইডে সামান্য প্যাডিং */
+        top: 25mm; /* ওপর থেকে পর্যাপ্ত ফাঁকা জায়গা (Margin-Top) নামিয়ে দেওয়া হয়েছে */
+        width: 100%;
+        padding: 0 10mm;
         box-sizing: border-box;
         text-align: center;
+    }
+
+    /* হেডার স্টাইল */
+    .brand-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 0 0 5px 0;
+        line-height: 1.3;
+    }
+
+    .address, .phone {
+        font-size: 12px;
+        margin: 2px 0;
+        color: #333;
+    }
+
+    /* সিরিয়াল নম্বর স্টাইল (অনেক বড় ও স্পষ্ট) */
+    .serial-section {
+        margin: 20px 0;
+        border-top: 1px dashed #000;
+        border-bottom: 1px dashed #000;
+        padding: 10px 0;
+    }
+
+    .serial-label {
+        font-size: 14px;
+        margin: 0 0 5px 0;
+    }
+
+    #ticket-number {
+        font-size: 42px; /* অনেক বড় সাইজ */
+        font-weight: 900;
+        margin: 0;
+        line-height: 1;
+    }
+
+    /* ফুটার স্টাইল */
+    .time-stamp {
+        font-size: 12px;
+        margin: 10px 0 5px 0;
+    }
+
+    .thank-you {
+        font-size: 13px;
+        font-weight: bold;
+        margin: 5px 0 0 0;
     }
 }
