@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>টিকেট</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- স্ক্রিনে যা দেখাবে -->
+    <div class="kiosk-container">
+        <h1>এলিট ডায়াগনস্টিক সেন্টার</h1>
+        <p>অনুগ্রহ করে নিচের বোতামে চাপ দিয়ে টিকেট সংগ্রহ করুন</p>
+        <button id="printBtn" onclick="generateTicket()">টিকেট নিন</button>
+    </div>
+
+    <!-- থার্মাল প্রিন্টারে যা প্রিন্ট হবে -->
+    <div id="ticket-template" class="printable">
+        <h2>এলিট ডায়াগনস্টিক সেন্টার</h2>
+        <p>সিরিয়াল নম্বর:</p>
+        <h1 id="ticket-number">#000</h1>
+        <hr>
+        <p id="ticket-time"></p>
+        <p>ধন্যবাদ, সাথে থাকুন।</p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

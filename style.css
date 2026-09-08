@@ -1,0 +1,45 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 20px;
+}
+
+.kiosk-container {
+    margin-top: 50px;
+}
+
+#printBtn {
+    background-color: #007bff;
+    color: white;
+    font-size: 24px;
+    padding: 20px 40px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+/* টিকেট প্রিন্ট টেমপ্লেট সাধারণ স্ক্রিনে লুকানো থাকবে */
+.printable {
+    display: none;
+}
+
+/* প্রিন্ট করার সময়ের জন্য সিএসএস (Media Print) */
+@media print {
+    body * {
+        visibility: hidden; /* স্ক্রিনের অনাকাঙ্ক্ষিত অংশ লুকানো */
+    }
+    .printable, .printable * {
+        visibility: visible; /* শুধু টিকেট অংশ দৃশ্যমান */
+    }
+    .printable {
+        display: block !important;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80mm; /* আপনার থার্মাল পেপার সাইজ (58mm বা 80mm) */
+        padding: 5mm;
+        text-align: center;
+    }
+}
