@@ -25,21 +25,38 @@ body {
     display: none;
 }
 
-/* প্রিন্ট করার সময়ের জন্য সিএসএস (Media Print) */
+/* প্রিন্ট করার সময়ের সিএসএস (Thermal Printer-এর জন্য) */
 @media print {
+    /* পেজের সাইজ থার্মাল রোলের সাইজে নির্ধারণ করা */
+    @page {
+        size: 80mm auto; /* ৮টি মিমি থার্মাল রোলের জন্য (কম হলে 58mm দিন) */
+        margin: 0;       /* মার্জিন বাদ দেওয়া যাতে লেখা কেটে না যায় */
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: #fff;
+    }
+
+    /* স্ক্রিনের অন্যান্য বোতাম ও টেক্সট লুকানো */
     body * {
-        visibility: hidden; /* স্ক্রিনের অনাকাঙ্ক্ষিত অংশ লুকানো */
+        visibility: hidden;
     }
+
+    /* শুধু টিকেট অংশ দৃশ্যমান ও থার্মাল সাইজে সেট করা */
     .printable, .printable * {
-        visibility: visible; /* শুধু টিকেট অংশ দৃশ্যমান */
+        visibility: visible;
     }
+
     .printable {
         display: block !important;
         position: absolute;
         left: 0;
         top: 0;
-        width: 80mm; /* আপনার থার্মাল পেপার সাইজ (58mm বা 80mm) */
-        padding: 5mm;
+        width: 100%;      /* পেজের পুরো প্রস্থ জুড়ে থাকবে */
+        padding: 5mm;     /* সাইডে সামান্য প্যাডিং */
+        box-sizing: border-box;
         text-align: center;
     }
 }
