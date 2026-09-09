@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ওয়েটিং রুম ডিসপ্লে - এলিট ডায়াগনস্টিক</title>
+
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
+
         body {
             background-color: #000000;
             color: #00FF00;
@@ -19,39 +21,49 @@
             flex-direction: column;
             padding: 20px;
         }
+
         header {
             text-align: center;
             margin-bottom: 20px;
         }
+
         header h1 {
             color: #ffffff;
             font-size: 2.2rem;
         }
+
         header p {
             color: #aaaaaa;
             font-size: 1.1rem;
         }
 
-        /* সর্বশেষ যাকে ডাকা হয়েছে তার হাইলাইট ব্যানার */
+
+        /* =====================================================
+           NOW CALLING - বড় ব্যানার
+           ===================================================== */
+
         .announcement-banner {
             border: 2px solid #00FF00;
             border-radius: 12px;
             padding: 20px;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 18px;
             background-color: #051505;
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
         }
+
         .announcement-banner h3 {
             font-size: 1.5rem;
             color: #ffffff;
             margin-bottom: 5px;
         }
+
         .announcement-banner .doc-name {
             font-size: 2.2rem;
             color: #ffffff;
             font-weight: bold;
         }
+
         .announcement-banner .serial-no {
             font-size: 5rem;
             color: #00FF00;
@@ -59,12 +71,71 @@
             text-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
         }
 
-        /* সকল ডাক্তারের গ্রিড */
+
+        /* =====================================================
+           RECENT CALLS
+           ===================================================== */
+
+        .recent-section {
+            margin-bottom: 20px;
+        }
+
+        .recent-title {
+            color: #aaaaaa;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .recent-calls {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .recent-card {
+            background-color: #111111;
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 8px 6px;
+            text-align: center;
+            min-width: 0;
+        }
+
+        .recent-card .recent-doctor {
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: bold;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .recent-card .recent-number {
+            color: #00FF00;
+            font-size: 1.7rem;
+            font-weight: bold;
+            margin-top: 3px;
+        }
+
+        .recent-card .recent-time {
+            color: #777777;
+            font-size: 0.75rem;
+            margin-top: 2px;
+        }
+
+
+        /* =====================================================
+           সকল ডাক্তারের গ্রিড
+           ===================================================== */
+
         .doctors-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 20px;
         }
+
         .doctor-card {
             background-color: #111111;
             border: 1px solid #333333;
@@ -72,10 +143,12 @@
             padding: 15px;
             text-align: center;
         }
+
         .doctor-card.active {
             border-color: #00FF00;
             box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
         }
+
         .doctor-card h4 {
             font-size: 1.1rem;
             color: #ffffff;
@@ -85,157 +158,672 @@
             align-items: center;
             justify-content: center;
         }
+
         .doctor-card .number {
             font-size: 2.5rem;
             font-weight: bold;
             color: #00FF00;
         }
+
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @media (max-width: 900px) {
+
+            body {
+                padding: 10px;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            header p {
+                font-size: 0.9rem;
+            }
+
+            .announcement-banner {
+                padding: 15px;
+            }
+
+            .announcement-banner .doc-name {
+                font-size: 1.7rem;
+            }
+
+            .announcement-banner .serial-no {
+                font-size: 4rem;
+            }
+
+            .recent-calls {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .doctors-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
     </style>
 </head>
+
+
 <body>
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
 
     <header>
         <h1>এলিট ডায়াগনস্টিক সেন্টার এন্ড ফিজিওথেরাপি</h1>
         <p>মার্ভেলাস টাওয়ার, ঢাকাদক্ষিণ রোড, গোলাপগঞ্জ, সিলেট।</p>
     </header>
 
-    <!-- সর্বশেষ রুগীর ঘোষণা ব্যানার -->
+
+    <!-- =====================================================
+         NOW CALLING
+         ===================================================== -->
+
     <div class="announcement-banner">
-        <div class="doc-name" id="calledDoctor">ডাঃ অপেক্ষমাণ...</div>
-        <div class="serial-no" id="calledSerial">#000</div>
+
+        <div class="announcement-title">
+            <h3>এখন ডাকা হচ্ছে</h3>
+        </div>
+
+        <div class="doc-name" id="calledDoctor">
+            ডাঃ অপেক্ষমাণ...
+        </div>
+
+        <div class="serial-no" id="calledSerial">
+            #000
+        </div>
+
     </div>
 
-    <!-- ৭ জন ডাক্তারের রিয়েলটাইম স্ট্যাটাস -->
+
+    <!-- =====================================================
+         RECENT CALLS
+         ===================================================== -->
+
+    <div class="recent-section">
+
+        <div class="recent-title">
+            সাম্প্রতিক কল
+        </div>
+
+        <div class="recent-calls" id="recentCalls">
+            <!-- JavaScript এখানে Recent Calls তৈরি করবে -->
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         সকল ডাক্তারের রিয়েলটাইম স্ট্যাটাস
+         ===================================================== -->
+
     <div class="doctors-grid" id="doctorsGrid"></div>
 
-    <!-- Firebase SDKs -->
+
+    <!-- =====================================================
+         FIREBASE SDKs
+         ===================================================== -->
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
+
     <script>
+
+        /* =====================================================
+           FIREBASE CONFIG
+           ===================================================== */
+
         const firebaseConfig = {
-          apiKey: "AIzaSyCSAWE6NYMb1jeGpUoDA03Ak3ZqargJemo",
-          authDomain: "elite-diagnostic-abf78.firebaseapp.com",
-          databaseURL: "https://elite-diagnostic-abf78-default-rtdb.firebaseio.com",
-          projectId: "elite-diagnostic-abf78",
-          storageBucket: "elite-diagnostic-abf78.firebasestorage.app",
-          messagingSenderId: "631961470012",
-          appId: "1:631961470012:web:7cdd1ed8e39455b15d2f39"
+            apiKey: "AIzaSyCSAWE6NYMb1jeGpUoDA03Ak3ZqargJemo",
+            authDomain: "elite-diagnostic-abf78.firebaseapp.com",
+            databaseURL: "https://elite-diagnostic-abf78-default-rtdb.firebaseio.com",
+            projectId: "elite-diagnostic-abf78",
+            storageBucket: "elite-diagnostic-abf78.firebasestorage.app",
+            messagingSenderId: "631961470012",
+            appId: "1:631961470012:web:7cdd1ed8e39455b15d2f39"
         };
+
 
         if (typeof firebase !== 'undefined' && !firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
 
+
         const db = firebase.database();
 
+
+        /* =====================================================
+           DOCTORS LIST
+           ===================================================== */
+
         const doctorsList = [
-            { key: 'doctor_1', name: 'ডাঃ সারওয়ার আহমদ জয়' },
-            { key: 'doctor_2', name: 'ডাঃ সাদিয়া জান্নাত' },
-            { key: 'doctor_3', name: 'ডাঃ আমিনা খাতুন' },
-            { key: 'doctor_4', name: 'ডাঃ জুয়েল আহমেদ' },
-            { key: 'doctor_5', name: 'ডাঃ নৌশিন ইসলাম চৌধুরী' },
-            { key: 'doctor_6', name: 'ডাঃ ইসতেহাদ আবু জাফর চৌঃ' },
-            { key: 'doctor_7', name: 'ডাঃ উমাইজা বিনতে অশোক' }
+
+            {
+                key: 'doctor_1',
+                name: 'ডাঃ সারওয়ার আহমদ জয়'
+            },
+
+            {
+                key: 'doctor_2',
+                name: 'ডাঃ সাদিয়া জান্নাত'
+            },
+
+            {
+                key: 'doctor_3',
+                name: 'ডাঃ আমিনা খাতুন'
+            },
+
+            {
+                key: 'doctor_4',
+                name: 'ডাঃ জুয়েল আহমেদ'
+            },
+
+            {
+                key: 'doctor_5',
+                name: 'ডাঃ নৌশিন ইসলাম চৌধুরী'
+            },
+
+            {
+                key: 'doctor_6',
+                name: 'ডাঃ ইসতেহাদ আবু জাফর চৌঃ'
+            },
+
+            {
+                key: 'doctor_7',
+                name: 'ডাঃ উমাইজা বিনতে অশোক'
+            }
+
         ];
 
-        // আপনার অরিজিনাল ৩.০ সেকেন্ডের ইকো ডিং-ডং সাউন্ড
+
+        /* =====================================================
+           RECENT CALLS STORAGE
+           সর্বশেষ ৫টি কল এখানে থাকবে
+           ===================================================== */
+
+        let recentCalls = [];
+
+
+        /* =====================================================
+           ECHO DING DONG SOUND
+           ===================================================== */
+
         function playEchoDingDong() {
+
             try {
-                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+
+                const AudioCtx =
+                    window.AudioContext ||
+                    window.webkitAudioContext;
+
                 const audioCtx = new AudioCtx();
+
 
                 if (audioCtx.state === 'suspended') {
                     audioCtx.resume();
                 }
 
-                // 1st Note (Ding - E5)
+
+                /* 1st Note - Ding */
+
                 const osc1 = audioCtx.createOscillator();
                 const gain1 = audioCtx.createGain();
+
                 osc1.type = 'sine';
-                osc1.frequency.setValueAtTime(659.25, audioCtx.currentTime);
-                gain1.gain.setValueAtTime(0.5, audioCtx.currentTime);
-                gain1.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.8);
+
+                osc1.frequency.setValueAtTime(
+                    659.25,
+                    audioCtx.currentTime
+                );
+
+                gain1.gain.setValueAtTime(
+                    0.5,
+                    audioCtx.currentTime
+                );
+
+                gain1.gain.exponentialRampToValueAtTime(
+                    0.0001,
+                    audioCtx.currentTime + 1.8
+                );
+
                 osc1.connect(gain1);
                 gain1.connect(audioCtx.destination);
-                osc1.start(audioCtx.currentTime);
-                osc1.stop(audioCtx.currentTime + 1.8);
 
-                // 2nd Note (Dong - C5)
+                osc1.start(audioCtx.currentTime);
+
+                osc1.stop(
+                    audioCtx.currentTime + 1.8
+                );
+
+
+                /* 2nd Note - Dong */
+
                 const osc2 = audioCtx.createOscillator();
                 const gain2 = audioCtx.createGain();
+
                 osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(523.25, audioCtx.currentTime + 0.5);
-                gain2.gain.setValueAtTime(0.5, audioCtx.currentTime + 0.5);
-                gain2.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 3.0);
+
+                osc2.frequency.setValueAtTime(
+                    523.25,
+                    audioCtx.currentTime + 0.5
+                );
+
+                gain2.gain.setValueAtTime(
+                    0.5,
+                    audioCtx.currentTime + 0.5
+                );
+
+                gain2.gain.exponentialRampToValueAtTime(
+                    0.0001,
+                    audioCtx.currentTime + 3.0
+                );
+
                 osc2.connect(gain2);
                 gain2.connect(audioCtx.destination);
-                osc2.start(audioCtx.currentTime + 0.5);
-                osc2.stop(audioCtx.currentTime + 3.0);
+
+                osc2.start(
+                    audioCtx.currentTime + 0.5
+                );
+
+                osc2.stop(
+                    audioCtx.currentTime + 3.0
+                );
+
 
             } catch (e) {
-                console.error("Audio playback error:", e);
+
+                console.error(
+                    "Audio playback error:",
+                    e
+                );
+
             }
+
         }
+
+
+        /* =====================================================
+           DOCTOR CARDS
+           ===================================================== */
 
         function renderCards() {
-            const grid = document.getElementById('doctorsGrid');
+
+            const grid =
+                document.getElementById('doctorsGrid');
+
             grid.innerHTML = '';
 
+
             doctorsList.forEach(doc => {
-                const card = document.createElement('div');
-                card.className = 'doctor-card';
-                card.id = `card-${doc.key}`;
+
+                const card =
+                    document.createElement('div');
+
+                card.className =
+                    'doctor-card';
+
+                card.id =
+                    `card-${doc.key}`;
+
+
                 card.innerHTML = `
-                    <h4>${doc.name}</h4>
-                    <div class="number" id="num-${doc.key}">#000</div>
+
+                    <h4>
+                        ${doc.name}
+                    </h4>
+
+                    <div
+                        class="number"
+                        id="num-${doc.key}">
+                        #000
+                    </div>
+
                 `;
+
+
                 grid.appendChild(card);
+
             });
+
         }
+
+
+        /* =====================================================
+           RECENT CALLS DISPLAY
+           ===================================================== */
+
+        function renderRecentCalls() {
+
+            const container =
+                document.getElementById('recentCalls');
+
+
+            container.innerHTML = '';
+
+
+            if (recentCalls.length === 0) {
+
+                container.innerHTML = `
+                    <div class="recent-card">
+                        <div class="recent-doctor">
+                            এখনো কোনো কল নেই
+                        </div>
+
+                        <div class="recent-number">
+                            #000
+                        </div>
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            recentCalls.forEach(call => {
+
+                const card =
+                    document.createElement('div');
+
+                card.className =
+                    'recent-card';
+
+
+                card.innerHTML = `
+
+                    <div class="recent-doctor">
+                        ${call.doctorName}
+                    </div>
+
+                    <div class="recent-number">
+                        #${String(call.serialNumber).padStart(3, '0')}
+                    </div>
+
+                    <div class="recent-time">
+                        ${call.time}
+                    </div>
+
+                `;
+
+
+                container.appendChild(card);
+
+            });
+
+        }
+
+
+        /* =====================================================
+           ADD RECENT CALL
+           ===================================================== */
+
+        function addRecentCall(data) {
+
+            if (
+                !data ||
+                !data.doctorName ||
+                !data.serialNumber
+            ) {
+                return;
+            }
+
+
+            const newCall = {
+
+                doctorKey:
+                    data.doctorKey,
+
+                doctorName:
+                    data.doctorName,
+
+                serialNumber:
+                    Number(data.serialNumber),
+
+                time:
+                    new Date().toLocaleTimeString(
+                        'bn-BD',
+                        {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit'
+                        }
+                    )
+
+            };
+
+
+            /*
+             * একই Call দুইবার ঢোকা বন্ধ করা
+             */
+
+            if (
+                recentCalls.length > 0 &&
+                recentCalls[0].doctorKey === newCall.doctorKey &&
+                recentCalls[0].serialNumber === newCall.serialNumber
+            ) {
+                return;
+            }
+
+
+            /*
+             * নতুন কল সবার আগে
+             */
+
+            recentCalls.unshift(newCall);
+
+
+            /*
+             * সর্বোচ্চ ৫টি Call রাখা
+             */
+
+            if (recentCalls.length > 5) {
+                recentCalls =
+                    recentCalls.slice(0, 5);
+            }
+
+
+            renderRecentCalls();
+
+        }
+
+
+        /* =====================================================
+           INITIALIZE DISPLAY
+           ===================================================== */
 
         function initDisplay() {
+
             renderCards();
 
-            // ৭ জন ডাক্তারের নম্বর সিঙ্ক
+            renderRecentCalls();
+
+
+            /* -----------------------------------------------
+               ৭ জন ডাক্তারের Current Serial Sync
+               ----------------------------------------------- */
+
             doctorsList.forEach(doc => {
-                db.ref(`queue/${doc.key}/current_calling`).on('value', (snapshot) => {
-                    const val = snapshot.val() || 0;
-                    const elem = document.getElementById(`num-${doc.key}`);
-                    if (elem) elem.innerText = '#' + String(val).padStart(3, '0');
-                });
-            });
 
-            // কল হওয়া মাত্রই ব্যানারে আপডেট এবং আপনার প্রিয় ডিং-ডং সাউন্ড প্লে
-            let initialLoad = true;
-            db.ref('queue/last_called').on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data && data.doctorName && data.serialNumber) {
-                    document.getElementById('calledDoctor').innerText = data.doctorName;
-                    document.getElementById('calledSerial').innerText = '#' + String(data.serialNumber).padStart(3, '0');
+                db.ref(
+                    `queue/${doc.key}/current_calling`
+                ).on('value', (snapshot) => {
 
-                    if (!initialLoad) {
-                        playEchoDingDong();
+                    const val =
+                        snapshot.val() || 0;
 
-                        document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('active'));
-                        const activeCard = document.getElementById(`card-${data.doctorKey}`);
-                        if (activeCard) activeCard.classList.add('active');
+
+                    const elem =
+                        document.getElementById(
+                            `num-${doc.key}`
+                        );
+
+
+                    if (elem) {
+
+                        elem.innerText =
+                            '#' +
+                            String(val).padStart(3, '0');
+
                     }
-                    initialLoad = false;
-                }
+
+                });
+
             });
+
+
+            /* -----------------------------------------------
+               LAST CALLED / NOW CALLING
+               ----------------------------------------------- */
+
+            let initialLoad = true;
+
+
+            db.ref('queue/last_called').on(
+                'value',
+                (snapshot) => {
+
+                    const data =
+                        snapshot.val();
+
+
+                    if (
+                        data &&
+                        data.doctorName &&
+                        data.serialNumber
+                    ) {
+
+
+                        /* -----------------------------------
+                           বড় Now Calling Banner
+                           ----------------------------------- */
+
+                        document.getElementById(
+                            'calledDoctor'
+                        ).innerText =
+                            data.doctorName;
+
+
+                        document.getElementById(
+                            'calledSerial'
+                        ).innerText =
+                            '#' +
+                            String(
+                                data.serialNumber
+                            ).padStart(3, '0');
+
+
+                        /* -----------------------------------
+                           প্রথমবার Load হলে Sound নয়
+                           ----------------------------------- */
+
+                        if (!initialLoad) {
+
+                            playEchoDingDong();
+
+
+                            /* -------------------------------
+                               Active Doctor Highlight
+                               ------------------------------- */
+
+                            document
+                                .querySelectorAll(
+                                    '.doctor-card'
+                                )
+                                .forEach(
+                                    c =>
+                                        c.classList.remove(
+                                            'active'
+                                        )
+                                );
+
+
+                            const activeCard =
+                                document.getElementById(
+                                    `card-${data.doctorKey}`
+                                );
+
+
+                            if (activeCard) {
+
+                                activeCard.classList.add(
+                                    'active'
+                                );
+
+                            }
+
+
+                            /* -------------------------------
+                               Recent Calls এ যোগ
+                               ------------------------------- */
+
+                            addRecentCall(data);
+
+                        }
+
+
+                        initialLoad = false;
+
+                    }
+
+                }
+            );
+
         }
 
-        // স্ক্রিনে যেকোনো জায়গায় ক্লিক করলে অডিও অটো-প্লে পারমিশন চালু থাকবে
-        document.body.addEventListener('click', function() {
-            const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            const dummyCtx = new AudioCtx();
-            if (dummyCtx.state === 'suspended') {
-                dummyCtx.resume();
-            }
-        });
 
-        window.onload = initDisplay;
+        /* =====================================================
+           AUDIO PERMISSION
+           ===================================================== */
+
+        document.body.addEventListener(
+            'click',
+            function () {
+
+                try {
+
+                    const AudioCtx =
+                        window.AudioContext ||
+                        window.webkitAudioContext;
+
+                    const dummyCtx =
+                        new AudioCtx();
+
+
+                    if (
+                        dummyCtx.state === 'suspended'
+                    ) {
+
+                        dummyCtx.resume();
+
+                    }
+
+                } catch (e) {
+
+                    console.log(
+                        'Audio permission error:',
+                        e
+                    );
+
+                }
+
+            }
+        );
+
+
+        /* =====================================================
+           START
+           ===================================================== */
+
+        window.onload =
+            initDisplay;
+
     </script>
+
 </body>
 </html>
