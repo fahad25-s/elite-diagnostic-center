@@ -9,57 +9,63 @@ const firebaseConfig = {
   appId: "1:631961470012:web:7cdd1ed8e39455b15d2f39"
 };
 
-// Initialize Firebase
 if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
 
-// DOM লোড হওয়ার পর ইভেন্ট লিসেনার যুক্ত করা
-document.addEventListener('DOMContentLoaded', function() {
-    const printBtn = document.getElementById('printBtn');
-    
-    if (printBtn) {
-        printBtn.addEventListener('click', generateTicket);
-    }
-});
+// Data Arrays
+var ms_business = [
+  "Outlook::https://outlook.office.com::outlook.png", 
+  "OneDrive::https://www.office.com/launch/onedrive::onedrive.png", 
+  "Word::https://www.office.com/launch/word::word.png", 
+  "Excel::https://www.office.com/launch/excel::excel.png", 
+  "Teams::https://teams.microsoft.com::teams.png", 
+  "Office::https://www.office.com::office.png"
+];
 
-function generateTicket() {
-    const today = new Date().toISOString().slice(0, 10);
-    const lastDate = localStorage.getItem('lastTicketDate');
-    let currentSerial = parseInt(localStorage.getItem('currentSerial') || '0', 10);
+var ms_personal = [
+  "Outlook::https://outlook.live.com/mail::outlook.png", 
+  "OneDrive::https://onedrive.live.com::onedrive.png", 
+  "Word::https://www.office.com/launch/word?auth=1::word.png", 
+  "Excel::https://www.office.com/launch/excel?auth=1::excel.png", 
+  "Teams::https://teams.live.com/_?utm_source=OfficeWeb::teams.png"
+];
 
-    if (lastDate !== today) {
-        currentSerial = 1;
-        localStorage.setItem('lastTicketDate', today);
-    } else {
-        currentSerial += 1;
-    }
+// List Generator Function
+function makeMsList(msUrlList, msType) {
+  if (!msUrlList) msUrlList = ms_business;
+  
+  var msHtmlData = "";
+  for (let i = 0; i < msUrlList.length; i++) {
+    var msName = msUrlList[i].split("::")[0] || "";
+    var msUrl = msUrlList[i].split("::")[1] || "";
+    var msImage = msUrlList[i].split("::")[2] || "";
+    msHtmlData += "<a class='link' href='" + msUrl + "' target='_blank'><img src='images/" + msImage + "' /><br>" + msName + "</a>";
+  }
 
-    localStorage.setItem('currentSerial', currentSerial);
-
-    const formattedSerial = '#' + String(currentSerial).padStart(3, '0');
-    
-    const now = new Date();
-    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
-    const formattedDateTime = now.toLocaleString('bn-BD', options);
-
-    const ticketNumElem = document.getElementById('ticket-number');
-    const ticketTimeElem = document.getElementById('ticket-time');
-
-    if (ticketNumElem) ticketNumElem.innerText = formattedSerial;
-    if (ticketTimeElem) ticketTimeElem.innerText = formattedDateTime;
-
-    // ফায়ারবেস ডাটাবেজ আপডেট
-    if (typeof firebase !== 'undefined') {
-        firebase.database().ref('queue').update({
-            total_issued: currentSerial
-        }).then(() => {
-            console.log("Firebase status: Updated!");
-        }).catch((err) => {
-            console.error("Firebase update error:", err);
-        });
-    }
-
-    // প্রিন্ট ডায়ালগ
-    window.print();
+  const listContainer = document.getElementById("ms_list");
+  if (listContainer) {
+    listContainer.innerHTML = msHtmlData;
+  }
 }
+
+// Event Listeners (Safe DOM Loading)
+document.addEventListener("DOMContentLoaded", function() {
+  const businessBtn = document.getElementById("ms_type_business");
+  const personalBtn = document.getElementById("ms_type_personal");
+
+  if (businessBtn) {
+    businessBtn.addEventListener("click", function() {
+      makeMsList(ms_business, "business");
+    });
+  }
+
+  if (personalBtn) {
+    personalBtn.addEventListener("click", function() {
+      makeMsList(ms_personal, "personal");
+    });
+  }
+
+  // ডিফল্ট লিস্ট লোড
+  makeMsList(ms_business, "business");
+});
