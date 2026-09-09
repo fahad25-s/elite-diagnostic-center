@@ -22,7 +22,18 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function generateTicket() {
-    db.ref('queue/total_issued').transaction((currentValue) => {
+    const doctorSelect = document.getElementById('doctorSelect');
+    
+    if (!doctorSelect) {
+        alert("ডাক্তার সিলেক্ট করার অপশন পাওয়া যায়নি!");
+        return;
+    }
+
+    const doctorKey = doctorSelect.value; // যেমন: doctor_1
+    const doctorName = doctorSelect.options[doctorSelect.selectedIndex].text; // ডাক্তারের নাম
+
+    // সিলেক্ট করা ডাক্তারের নির্দিষ্ট পাথে কাউন্ট ট্রানজেকশন (যেমন: queue/doctor_1/total_issued)
+    db.ref(`queue/${doctorKey}/total_issued`).transaction((currentValue) => {
         return (currentValue || 0) + 1;
     }, (error, committed, snapshot) => {
         if (error) {
@@ -34,15 +45,21 @@ function generateTicket() {
             
             const now = new Date();
             const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
-            const formattedDateTime = now.toLocaleString('en-US', options);
+            const formattedDateTime = now.toLocaleString('bn-BD', options); // বাংলা ডেট ফরম্যাট
 
+            // টিকেটে ডাটা বসানো
+            const docElem = document.getElementById('ticket-doctor');
             const numElem = document.getElementById('ticket-number');
             const timeElem = document.getElementById('ticket-time');
 
+            if (docElem) docElem.innerText = doctorName;
             if (numElem) numElem.innerText = formattedSerial;
             if (timeElem) timeElem.innerText = formattedDateTime;
 
-            // কোনো সাউন্ড ছাড়া সরাসরি প্রিন্ট
+            // ডাক্তারের নাম ফায়ারবেসে সেভ রাখা
+            db.ref(`queue/${doctorKey}/name`).set(doctorName);
+
+            // কোনো সাউন্ড ছাড়া সরাসরি নিঃশব্দে প্রিন্ট
             window.print();
         }
     });
