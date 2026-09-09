@@ -11,9 +11,9 @@
             padding: 0;
         }
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #0f172a;
-            color: #ffffff;
+            background-color: #000000;
+            color: #00FF00;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -21,116 +21,93 @@
         }
         header {
             text-align: center;
-            padding: 15px;
-            background-color: #1e293b;
-            border-radius: 12px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         header h1 {
-            color: #38bdf8;
+            color: #ffffff;
             font-size: 2.2rem;
+        }
+        header p {
+            color: #aaaaaa;
+            font-size: 1.1rem;
         }
 
         /* সর্বশেষ যাকে ডাকা হয়েছে তার হাইলাইট ব্যানার */
         .announcement-banner {
-            background: linear-gradient(135deg, #1e3a8a, #0284c7);
-            border: 3px solid #38bdf8;
-            border-radius: 16px;
-            padding: 25px;
+            border: 2px solid #00FF00;
+            border-radius: 12px;
+            padding: 20px;
             text-align: center;
             margin-bottom: 30px;
-            box-shadow: 0 10px 25px rgba(56, 189, 248, 0.2);
-            animation: pulse 2s infinite alternate;
+            background-color: #051505;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
         }
         .announcement-banner h3 {
             font-size: 1.5rem;
-            color: #e0f2fe;
-            margin-bottom: 10px;
+            color: #ffffff;
+            margin-bottom: 5px;
         }
         .announcement-banner .doc-name {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             color: #ffffff;
             font-weight: bold;
         }
         .announcement-banner .serial-no {
-            font-size: 4.5rem;
-            color: #facc15;
-            font-weight: 800;
-            margin-top: 10px;
-            letter-spacing: 2px;
+            font-size: 5rem;
+            color: #00FF00;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
         }
 
-        /* সকল ডাক্তারের লিস্ট কার্ড */
+        /* সকল ডাক্তারের গ্রিড */
         .doctors-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 20px;
         }
         .doctor-card {
-            background-color: #1e293b;
-            border: 1px solid #334155;
-            border-radius: 12px;
-            padding: 20px;
+            background-color: #111111;
+            border: 1px solid #333333;
+            border-radius: 10px;
+            padding: 15px;
             text-align: center;
-            transition: all 0.3s ease;
         }
         .doctor-card.active {
-            border-color: #facc15;
-            background-color: #1e293b;
-            box-shadow: 0 0 15px rgba(250, 204, 21, 0.4);
+            border-color: #00FF00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
         }
         .doctor-card h4 {
-            font-size: 1.2rem;
-            color: #94a3b8;
-            margin-bottom: 15px;
-            min-height: 2.8em;
+            font-size: 1.1rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+            min-height: 2.5em;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .doctor-card .number {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             font-weight: bold;
-            color: #38bdf8;
-        }
-
-        /* অডিও নোটিফিকেশন সাউন্ড ট্র্যাকার */
-        .audio-btn {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background-color: #334155;
-            color: #fff;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            opacity: 0.7;
+            color: #00FF00;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>এলিট ডায়াগনস্টিক সেন্টার</h1>
-        <p>ওয়েটিং রুম রুগী আহ্বান ডিসপ্লে</p>
+        <h1>এলিট ডায়াগনস্টিক সেন্টার এন্ড ফিজিওথেরাপি</h1>
+        <p>মার্ভেলাস টাওয়ার, ঢাকাদক্ষিণ রোড, গোলাপগঞ্জ, সিলেট।</p>
     </header>
 
-    <!-- সাম্প্রতিক রুগীর ঘোষণা ব্যানার -->
-    <div class="announcement-banner" id="banner">
+    <!-- সর্বশেষ রুগীর ঘোষণা ব্যানার -->
+    <div class="announcement-banner">
         <h3>এখন প্রবেশ করুন</h3>
         <div class="doc-name" id="calledDoctor">ডাঃ অপেক্ষমাণ...</div>
         <div class="serial-no" id="calledSerial">#000</div>
     </div>
 
-    <!-- সকল ডাক্তারের বর্তমান স্ট্যাটাস -->
-    <div class="doctors-grid" id="doctorsGrid">
-        <!-- জাভাস্ক্রিপ্ট থেকে অটোমেটিক ৭ জন ডাক্তারের কার্ড তৈরি হবে -->
-    </div>
-
-    <button class="audio-btn" onclick="enableAudio()">🔊 সাউন্ড আনমিউট করুন</button>
+    <!-- ৭ জন ডাক্তারের রিয়েলটাইম স্ট্যাটাস -->
+    <div class="doctors-grid" id="doctorsGrid"></div>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -163,40 +140,45 @@
             { key: 'doctor_7', name: 'ডাঃ উমাইজা বিনতে অশোক' }
         ];
 
-        let audioContextAllowed = false;
-
-        function enableAudio() {
-            audioContextAllowed = true;
-            playDingSound();
-            alert("অডিও অন হয়েছে! এখন থেকে নতুন রুগী ডাকলে বেল বাজবে।");
-        }
-
-        // বেল সাউন্ড জেনারেটর (কোনো বাহ্যিক অডিও ফাইল লাগবে না)
-        function playDingSound() {
-            if (!audioContextAllowed) return;
+        // আপনার অরিজিনাল ৩.০ সেকেন্ডের ইকো ডিং-ডং সাউন্ড
+        function playEchoDingDong() {
             try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const audioCtx = new AudioCtx();
 
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5 note
-                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.1); // A5 note
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
 
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 1.2);
+                // 1st Note (Ding - E5)
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(659.25, audioCtx.currentTime);
+                gain1.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.8);
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start(audioCtx.currentTime);
+                osc1.stop(audioCtx.currentTime + 1.8);
 
-                osc.connect(gain);
-                gain.connect(ctx.destination);
+                // 2nd Note (Dong - C5)
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(523.25, audioCtx.currentTime + 0.5);
+                gain2.gain.setValueAtTime(0.5, audioCtx.currentTime + 0.5);
+                gain2.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 3.0);
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+                osc2.start(audioCtx.currentTime + 0.5);
+                osc2.stop(audioCtx.currentTime + 3.0);
 
-                osc.start();
-                osc.stop(ctx.currentTime + 1.2);
             } catch (e) {
-                console.log("Audio playback error:", e);
+                console.error("Audio playback error:", e);
             }
         }
 
-        // ডিসপ্লেতে সব ডাক্তারের কার্ড তৈরি
         function renderCards() {
             const grid = document.getElementById('doctorsGrid');
             grid.innerHTML = '';
@@ -213,46 +195,46 @@
             });
         }
 
-        // লাইভ ডাটা লিসেনার
         function initDisplay() {
             renderCards();
 
-            // ১. প্রতিটি ডাক্তারের বর্তমান নম্বর লাইভ আপডেট করা
+            // ৭ জন ডাক্তারের নম্বর সিঙ্ক
             doctorsList.forEach(doc => {
                 db.ref(`queue/${doc.key}/current_calling`).on('value', (snapshot) => {
                     const val = snapshot.val() || 0;
-                    const formatted = '#' + String(val).padStart(3, '0');
                     const elem = document.getElementById(`num-${doc.key}`);
-                    if (elem) elem.innerText = formatted;
+                    if (elem) elem.innerText = '#' + String(val).padStart(3, '0');
                 });
             });
 
-            // ২. সর্বশেষ যাকে ডাকা হয়েছে তাকে ব্যানারে বড় করে দেখানো
+            // কল হওয়া মাত্রই ব্যানারে আপডেট এবং আপনার প্রিয় ডিং-ডং সাউন্ড প্লে
             let initialLoad = true;
             db.ref('queue/last_called').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data && data.doctorName && data.serialNumber) {
-                    const docElem = document.getElementById('calledDoctor');
-                    const numElem = document.getElementById('calledSerial');
-                    
-                    docElem.innerText = data.doctorName;
-                    numElem.innerText = '#' + String(data.serialNumber).padStart(3, '0');
+                    document.getElementById('calledDoctor').innerText = data.doctorName;
+                    document.getElementById('calledSerial').innerText = '#' + String(data.serialNumber).padStart(3, '0');
 
-                    // প্রথমবার লোড হওয়ার পর থেকে নতুন কোনো রুগী ডাকলেই বেল বাজবে
                     if (!initialLoad) {
-                        playDingSound();
+                        playEchoDingDong();
 
-                        // একটিভ ডাক্তারের কার্ড হাইলাইট করা
                         document.querySelectorAll('.doctor-card').forEach(c => c.classList.remove('active'));
                         const activeCard = document.getElementById(`card-${data.doctorKey}`);
-                        if (activeCard) {
-                            activeCard.classList.add('active');
-                        }
+                        if (activeCard) activeCard.classList.add('active');
                     }
                     initialLoad = false;
                 }
             });
         }
+
+        // স্ক্রিনে যেকোনো জায়গায় ক্লিক করলে অডিও অটো-প্লে পারমিশন চালু থাকবে
+        document.body.addEventListener('click', function() {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            const dummyCtx = new AudioCtx();
+            if (dummyCtx.state === 'suspended') {
+                dummyCtx.resume();
+            }
+        });
 
         window.onload = initDisplay;
     </script>
