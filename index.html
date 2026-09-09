@@ -7,13 +7,26 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- কিওস্ক স্ক্রিন-->
+    <!-- কিওস্ক স্ক্রিন -->
     <div class="kiosk-container">
         <h1>এলিট ডায়াগনস্টিক সেন্টার এন্ড ফিজিওথেরাপি</h1>
         <p>মার্ভেলাস টাওয়ার, ঢাকাদক্ষিণ রোড, গোলাপগঞ্জ, সিলেট।</p>
         <p>মোবাইলঃ- ০১৩৩৭-২৭৩০৮৩</p>
         <button id="printBtn">টিকেট নিন</button>
     </div>
+
+    <!-- টাইপ সিলেকশন ও লিংক লিস্ট (যদি লাগে) -->
+    <div class="type-selector" style="margin: 20px text-align: center;">
+        <label>
+            <input type="radio" id="ms_type_business" name="ms_type" checked> Business
+        </label>
+        <label>
+            <input type="radio" id="ms_type_personal" name="ms_type"> Personal
+        </label>
+    </div>
+
+    <!-- শর্টকাট লিস্ট কনটেইনার -->
+    <div id="ms_list"></div>
 
     <!-- থার্মাল প্রিন্ট ভিউ -->
     <div id="ticket-template" class="printable">
@@ -37,6 +50,8 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- প্রজেক্টের মেইন স্ক্রিপ্ট -->
     <script src="script.js"></script>
 </body>
 </html>
