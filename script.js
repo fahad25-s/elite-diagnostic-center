@@ -27,14 +27,14 @@ function generateTicket() {
     }, (error, committed, snapshot) => {
         if (error) {
             console.error("Transaction failed: ", error);
-            alert("নেটওয়ার্ক সমস্যা! টিকেট জেনারেট করা যাচ্ছে না।");
+            alert("Network error! Could not generate ticket.");
         } else if (committed) {
             const currentSerial = snapshot.val();
             const formattedSerial = '#' + String(currentSerial).padStart(3, '0');
             
             const now = new Date();
             const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
-            const formattedDateTime = now.toLocaleString('bn-BD', options);
+            const formattedDateTime = now.toLocaleString('en-US', options);
 
             const numElem = document.getElementById('ticket-number');
             const timeElem = document.getElementById('ticket-time');
@@ -42,7 +42,7 @@ function generateTicket() {
             if (numElem) numElem.innerText = formattedSerial;
             if (timeElem) timeElem.innerText = formattedDateTime;
 
-            // অডিও এবং ভয়েস প্লে করার পর প্রিন্ট কমান্ড রান হবে
+            // সাউন্ড বাজানো এবং ইংরেজি ভয়েস বলা
             playToneAndVoice(currentSerial, () => {
                 window.print();
             });
@@ -51,35 +51,44 @@ function generateTicket() {
 }
 
 function playToneAndVoice(serialNumber, callback) {
-    // অডিও ওয়েবসাইট পেজে কোনো বাধা ছাড়া তৈরি করা
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    // ১. দুই ধাপের সুন্দর ডিং-ডং (Ding-Dong) টোন তৈরি
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
-    // ১. একটি বিফ/টোন সাউন্ড তৈরি করা (কোনো এক্সটার্নাল ফাইলের ওপর নির্ভরতা ছাড়া)
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
-    
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(587.33, audioContext.currentTime); // D5 note
-    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
-    
-    osc.start();
-    osc.stop(audioContext.currentTime + 0.3); // ০.৩ সেকেন্ডের সুন্দর টোন
+    // ১ম সুর (Ding)
+    const osc1 = audioCtx.createOscillator();
+    const gain1 = audioCtx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
+    gain1.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+    osc1.connect(gain1);
+    gain1.connect(audioCtx.destination);
+    osc1.start(audioCtx.currentTime);
+    osc1.stop(audioCtx.currentTime + 0.5);
 
-    // ২. টোন বাজার পর ভয়েস দেওয়া
+    // ২য় সুর (Dong)
+    const osc2 = audioCtx.createOscillator();
+    const gain2 = audioCtx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(523.25, audioCtx.currentTime + 0.3); // C5
+    gain2.gain.setValueAtTime(0.3, audioCtx.currentTime + 0.3);
+    gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.9);
+    osc2.connect(gain2);
+    gain2.connect(audioCtx.destination);
+    osc2.start(audioCtx.currentTime + 0.3);
+    osc2.stop(audioCtx.currentTime + 0.9);
+
+    // ২. ডিং-ডং টোন শেষ হলে ইংরেজিতে ডিক্লেয়ার করবে: "Next 1", "Next 2"...
     setTimeout(() => {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
 
-            const text = `আপনার টিকেট নম্বর ${serialNumber}`;
+            const text = `Next ${serialNumber}`;
             const utterance = new SpeechSynthesisUtterance(text);
             
-            // ভাষা সেটআপ
-            utterance.lang = 'bn-BD';
-            utterance.rate = 0.8;
+            utterance.lang = 'en-US'; // ইংরেজি ভয়েস
+            utterance.rate = 0.85;    // স্বাভাবিক সুন্দর গতি
 
-            // ভয়েস শেষ হলে প্রিন্ট অপশন চালু হবে
             utterance.onend = function() {
                 if (callback) callback();
             };
@@ -92,5 +101,5 @@ function playToneAndVoice(serialNumber, callback) {
         } else {
             if (callback) callback();
         }
-    }, 400);
+    }, 900);
 }
