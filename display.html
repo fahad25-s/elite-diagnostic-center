@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সিরিয়াল ডিসপ্লে - এলিট ডায়াগনস্টিক</title>
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background: #0f172a; 
+            color: white; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            height: 100vh; 
+            text-align: center;
+        }
+        .header { background: #1e293b; padding: 25px; border-bottom: 3px solid #38bdf8; }
+        .header h1 { margin: 0; font-size: 38px; color: #38bdf8; }
+        .header p { margin: 8px 0 0 0; font-size: 20px; color: #94a3b8; }
+        
+        .main-display { margin: auto 0; }
+        .label { font-size: 32px; color: #cbd5e1; margin-bottom: 10px; }
+        .big-number { font-size: 140px; font-weight: 900; color: #4ade80; margin: 0; text-shadow: 0 0 20px rgba(74, 222, 128, 0.4); }
+        
+        .footer { background: #1e293b; padding: 15px; font-size: 22px; color: #f8fafc; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>এলিট ডায়াগনস্টিক সেন্টার এন্ড ফিজিওথেরাপি</h1>
+        <p>মার্ভেলাস টাওয়ার, ঢাকাদক্ষিণ রোড, গোলাপগঞ্জ, সিলেট।</p>
+    </div>
+
+    <div class="main-display">
+        <div class="label">বর্তমান সিরিয়াল নাম্বার</div>
+        <h1 id="live-serial" class="big-number">#০০০</h1>
+    </div>
+
+    <div class="footer">
+        ধন্যবাদ, আমাদের সাথে থাকুন
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyCSAWE6NYMb1jeGpUoDA03Ak3ZqargJemo",
+          authDomain: "elite-diagnostic-abf78.firebaseapp.com",
+          databaseURL: "https://elite-diagnostic-abf78-default-rtdb.firebaseio.com",
+          projectId: "elite-diagnostic-abf78",
+          storageBucket: "elite-diagnostic-abf78.firebasestorage.app",
+          messagingSenderId: "631961470012",
+          appId: "1:631961470012:web:7cdd1ed8e39455b15d2f39"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // ফায়ারবেস থেকে রিয়েল-টাইমে নাম্বার পরিবর্তন ধরা
+        database.ref('queue/current_calling').on('value', (snapshot) => {
+            const callingNum = snapshot.val() || 0;
+            document.getElementById('live-serial').innerText = '#' + String(callingNum).padStart(3, '0');
+        });
+    </script>
+</body>
+</html>
