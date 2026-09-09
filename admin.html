@@ -3,79 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ডাক্তার প্যানেল - এলিট ডায়াগনস্টিক</title>
+    <title>ডাক্তার এডমিন প্যানেল - এলিট ডায়াগনস্টিক</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; background: #eef2f5; padding: 20px; }
-        .card { background: white; max-width: 400px; margin: 30px auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h2 { color: #333; margin-top: 0; }
-        .number-box { font-size: 50px; font-weight: bold; color: #28a745; margin: 15px 0; }
-        .info { font-size: 16px; color: #666; margin-bottom: 20px; }
-        .btn { background: #28a745; color: white; border: none; padding: 15px 30px; font-size: 20px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
-        .btn:active { background: #218838; }
-        .reset-btn { background: #dc3545; margin-top: 15px; font-size: 14px; padding: 8px 15px; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .admin-card {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        select, button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            font-size: 1rem;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        button.next-btn {
+            background-color: #28a745;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button.next-btn:hover {
+            background-color: #218838;
+        }
+        .status-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+        }
+        .status-box h2 {
+            margin: 5px 0;
+            color: #007bff;
+            font-size: 2.5rem;
+        }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h2>ডাক্তার রুম কন্ট্রোল</h2>
-        <p class="info">বর্তমানে রুমে রোগী সিরিয়াল:</p>
-        <div id="calling-number" class="number-box">#000</div>
-        <p class="info">মোট টিকেট দেওয়া হয়েছে: <b id="total-issued">0</b></p>
-        
-        <button class="btn" onclick="nextPatient()">পরবর্তী রোগী ডাকুন (Next)</button>
-        <br>
-        <button class="btn reset-btn" onclick="resetQueue()">আজকের সিরিয়াল রিসেট</button>
+    <div class="admin-card">
+        <h2>এলিট ডায়াগনস্টিক সেন্টার</h2>
+        <p>ডাক্তার কলিং প্যানেল</p>
+        <hr>
+
+        <label for="doctorSelect" style="font-weight: bold; display: block; text-align: left;">আপনার আইডি/নাম সিলেক্ট করুন:</label>
+        <select id="doctorSelect">
+            <option value="doctor_1">ডাঃ সারওয়ার আহমদ জয়</option>
+            <option value="doctor_2">ডাঃ সাদিয়া জান্নাত</option>
+            <option value="doctor_3">ডাঃ আমিনা খাতুন</option>
+            <option value="doctor_4">ডাঃ জুয়েল আহমেদ</option>
+            <option value="doctor_5">ডাঃ নৌশিন ইসলাম চৌধুরী</option>
+            <option value="doctor_6">ডাঃ ইসতেহাদ আবু জাফর চৌঃ</option>
+            <option value="doctor_7">ডাঃ উমাইজা বিনতে অশোক</option>
+        </select>
+
+        <div class="status-box">
+            <span>বর্তমান রুগীর নম্বর</span>
+            <h2 id="currentCalling">#000</h2>
+        </div>
+
+        <button id="nextBtn" class="next-btn">NEXT (পরবর্তী রুগী)</button>
     </div>
 
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
     <script>
         const firebaseConfig = {
           apiKey: "AIzaSyCSAWE6NYMb1jeGpUoDA03Ak3ZqargJemo",
           authDomain: "elite-diagnostic-abf78.firebaseapp.com",
-          databaseURL: "https://elite-diagnostic-abf78-default-rtdb.firebaseio.com/",
+          databaseURL: "https://elite-diagnostic-abf78-default-rtdb.firebaseio.com",
           projectId: "elite-diagnostic-abf78",
           storageBucket: "elite-diagnostic-abf78.firebasestorage.app",
           messagingSenderId: "631961470012",
           appId: "1:631961470012:web:7cdd1ed8e39455b15d2f39"
         };
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
 
-        let currentCalling = 0;
-        let totalIssued = 0;
+        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
 
-        // ফায়ারবেস থেকে রিয়েল-টাইম ডাটা রিড করা
-        database.ref('queue').on('value', (snapshot) => {
-            const data = snapshot.val() || {};
-            currentCalling = data.current_calling || 0;
-            totalIssued = data.total_issued || 0;
+        const db = firebase.database();
+        const doctorSelect = document.getElementById('doctorSelect');
+        const currentCallingElem = document.getElementById('currentCalling');
+        const nextBtn = document.getElementById('nextBtn');
 
-            document.getElementById('calling-number').innerText = '#' + String(currentCalling).padStart(3, '0');
-            document.getElementById('total-issued').innerText = totalIssued;
+        // সিলেক্ট করা ডাক্তারের ডাটা লাইভ আপডেট করা
+        function listenDoctorQueue() {
+            const doctorKey = doctorSelect.value;
+            
+            db.ref(`queue/${doctorKey}/current_calling`).on('value', (snapshot) => {
+                const val = snapshot.val() || 0;
+                currentCallingElem.innerText = '#' + String(val).padStart(3, '0');
+            });
+        }
+
+        // ড্রপডাউন চেঞ্জ করলে লাইভ ডাটা পরিবর্তন হবে
+        doctorSelect.addEventListener('change', () => {
+            // আগের লিসেনার অফ করে নতুন ডাক্তারের ডাটা ট্র্যাক
+            db.ref('queue').off();
+            listenDoctorQueue();
         });
 
-        function nextPatient() {
-            if (currentCalling < totalIssued) {
-                currentCalling += 1;
-                database.ref('queue').update({
-                    current_calling: currentCalling
-                });
-            } else {
-                alert("আর কোনো রোগী অপেক্ষমাণ নেই!");
-            }
-        }
+        // NEXT বাটনে চাপ দিলে ফায়ারবেসে আপডেট
+        nextBtn.addEventListener('click', () => {
+            const doctorKey = doctorSelect.value;
+            const doctorName = doctorSelect.options[doctorSelect.selectedIndex].text;
 
-        function resetQueue() {
-            if(confirm("আপনি কি আজকের সিরিয়াল রিসেট করতে চান?")) {
-                database.ref('queue').set({
-                    current_calling: 0,
-                    total_issued: 0
-                });
-                localStorage.setItem('currentSerial', '0');
-            }
-        }
+            db.ref(`queue/${doctorKey}/current_calling`).transaction((currentValue) => {
+                return (currentValue || 0) + 1;
+            }, (error, committed, snapshot) => {
+                if (committed) {
+                    const nextSerial = snapshot.val();
+                    
+                    // ওয়েটিং রুম ডিসপ্লকে এক জায়গায় ট্র্যাক রাখার জন্য 'last_called' ডাটা আপডেট
+                    db.ref('queue/last_called').set({
+                        doctorKey: doctorKey,
+                        doctorName: doctorName,
+                        serialNumber: nextSerial,
+                        timestamp: Date.now()
+                    });
+                }
+            });
+        });
+
+        // প্রথমবার পেজ লোড হলে
+        listenDoctorQueue();
     </script>
 </body>
 </html>
