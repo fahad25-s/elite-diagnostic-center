@@ -42,64 +42,8 @@ function generateTicket() {
             if (numElem) numElem.innerText = formattedSerial;
             if (timeElem) timeElem.innerText = formattedDateTime;
 
-            // সাউন্ড বাজানো এবং ইংরেজি ভয়েস বলা
-            playToneAndVoice(currentSerial, () => {
-                window.print();
-            });
+            // কোনো সাউন্ড ছাড়া সরাসরি প্রিন্ট
+            window.print();
         }
     });
-}
-
-function playToneAndVoice(serialNumber, callback) {
-    // ১. দুই ধাপের সুন্দর ডিং-ডং (Ding-Dong) টোন তৈরি
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    // ১ম সুর (Ding)
-    const osc1 = audioCtx.createOscillator();
-    const gain1 = audioCtx.createGain();
-    osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(659.25, audioCtx.currentTime); // E5
-    gain1.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-    osc1.connect(gain1);
-    gain1.connect(audioCtx.destination);
-    osc1.start(audioCtx.currentTime);
-    osc1.stop(audioCtx.currentTime + 0.5);
-
-    // ২য় সুর (Dong)
-    const osc2 = audioCtx.createOscillator();
-    const gain2 = audioCtx.createGain();
-    osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(523.25, audioCtx.currentTime + 0.3); // C5
-    gain2.gain.setValueAtTime(0.3, audioCtx.currentTime + 0.3);
-    gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.9);
-    osc2.connect(gain2);
-    gain2.connect(audioCtx.destination);
-    osc2.start(audioCtx.currentTime + 0.3);
-    osc2.stop(audioCtx.currentTime + 0.9);
-
-    // ২. ডিং-ডং টোন শেষ হলে ইংরেজিতে ডিক্লেয়ার করবে: "Next 1", "Next 2"...
-    setTimeout(() => {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-
-            const text = `Next ${serialNumber}`;
-            const utterance = new SpeechSynthesisUtterance(text);
-            
-            utterance.lang = 'en-US'; // ইংরেজি ভয়েস
-            utterance.rate = 0.85;    // স্বাভাবিক সুন্দর গতি
-
-            utterance.onend = function() {
-                if (callback) callback();
-            };
-
-            utterance.onerror = function() {
-                if (callback) callback();
-            };
-
-            window.speechSynthesis.speak(utterance);
-        } else {
-            if (callback) callback();
-        }
-    }, 900);
 }
