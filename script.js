@@ -10,15 +10,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-if (!firebase.apps.length) {
+if (typeof firebase !== 'undefined' && !firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
-}
-const database = firebase.database();
-
-// বাংলা ডিজিট কনভার্টার
-function getBanglaNumber(num) {
-    const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
-    return num.toString().split('').map(digit => banglaDigits[digit] || digit).join('');
 }
 
 function generateTicket() {
@@ -36,7 +29,7 @@ function generateTicket() {
 
     localStorage.setItem('currentSerial', currentSerial);
 
-    // ফরম্যাটিং (যেমন: #001)
+    // ফরম্যাটিং (#001, #002)
     const formattedSerial = '#' + String(currentSerial).padStart(3, '0');
     
     // তারিখ ও সময়
@@ -44,13 +37,21 @@ function generateTicket() {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
     const formattedDateTime = now.toLocaleString('bn-BD', options);
 
-    // টিকেটের এলিমেন্টে ডাটা বসানো
+    // টিকেটে তথ্য বসানো
     document.getElementById('ticket-number').innerText = formattedSerial;
     document.getElementById('ticket-time').innerText = formattedDateTime;
 
-    // ১. ফায়ারবেস ডাটাবেজে মোট টিকেট ও অবজেক্ট সেভ
-    database.ref('queue/total_issued').set(currentSerial);
+    // ফায়ারবেসে আপডেট পাঠানো
+    if (typeof firebase !== 'undefined') {
+        firebase.database().ref('queue').update({
+            total_issued: currentSerial
+        }).then(() => {
+            console.log("Firebase Updated Successfully!");
+        }).catch((err) => {
+            console.error("Firebase Error:", err);
+        });
+    }
 
-    // ২. প্রিন্ট কমান্ড
+    // প্রিন্ট কমান্ড
     window.print();
 }
