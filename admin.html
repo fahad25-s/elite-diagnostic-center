@@ -3,69 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ডাক্তার এডমিন প্যানেল - এলিট ডায়াগনস্টিক</title>
+    <title>ডাক্তার কলিং প্যানেল - এলিট ডায়াগনস্টিক</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #f4f6f9;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
+            padding: 15px;
         }
         .admin-card {
             background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
+            padding: 30px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             text-align: center;
         }
-        select, button {
+        h1 {
+            font-size: 1.8rem;
+            color: #111;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        hr {
+            border: 0;
+            border-top: 1px solid #e2e8f0;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+            font-size: 1.1rem;
+            display: block;
+            margin-bottom: 10px;
+            color: #222;
+        }
+        select {
             width: 100%;
             padding: 12px;
-            margin-top: 15px;
-            font-size: 1rem;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            background-color: #f8fafc;
+            color: #0284c7;
+            font-weight: 600;
+            margin-bottom: 20px;
+            outline: none;
         }
-        button.next-btn {
-            background-color: #28a745;
-            color: white;
-            font-size: 1.3rem;
+        .display-box {
+            background-color: #f1f5f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .display-box p {
+            font-size: 1.1rem;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+        .display-box h2 {
+            font-size: 3.5rem;
+            color: #0284c7;
             font-weight: bold;
+        }
+        .btn-next {
+            width: 100%;
+            background-color: #16a34a;
+            color: white;
+            font-size: 1.4rem;
+            font-weight: bold;
+            padding: 16px;
             border: none;
+            border-radius: 8px;
             cursor: pointer;
             transition: background 0.2s;
+            margin-bottom: 12px;
         }
-        button.next-btn:hover {
-            background-color: #218838;
+        .btn-next:active {
+            background-color: #15803d;
         }
-        .status-box {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e9ecef;
+        .btn-reset {
+            width: 100%;
+            background-color: #ef4444;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 10px;
+            border: none;
             border-radius: 6px;
+            cursor: pointer;
         }
-        .status-box h2 {
-            margin: 5px 0;
-            color: #007bff;
-            font-size: 2.5rem;
+        .btn-reset:active {
+            background-color: #dc2626;
         }
     </style>
 </head>
 <body>
 
     <div class="admin-card">
-        <h2>এলিট ডায়াগনস্টিক সেন্টার</h2>
-        <p>ডাক্তার কলিং প্যানেল</p>
+        <h1>এলিট ডায়াগনস্টিক সেন্টার</h1>
+        <p class="subtitle">ডাক্তার কলিং প্যানেল</p>
         <hr>
 
-        <label for="doctorSelect" style="font-weight: bold; display: block; text-align: left;">আপনার আইডি/নাম সিলেক্ট করুন:</label>
-        <select id="doctorSelect">
+        <label for="doctorSelect">আপনার আইডি/নাম সিলেক্ট করুন:</label>
+        <select id="doctorSelect" onchange="onDoctorChange()">
             <option value="doctor_1">ডাঃ সারওয়ার আহমদ জয়</option>
             <option value="doctor_2">ডাঃ সাদিয়া জান্নাত</option>
             <option value="doctor_3">ডাঃ আমিনা খাতুন</option>
@@ -75,12 +128,13 @@
             <option value="doctor_7">ডাঃ উমাইজা বিনতে অশোক</option>
         </select>
 
-        <div class="status-box">
-            <span>বর্তমান রুগীর নম্বর</span>
-            <h2 id="currentCalling">#000</h2>
+        <div class="display-box">
+            <p>বর্তমান রুগীর নম্বর</p>
+            <h2 id="calling-number">#000</h2>
         </div>
 
-        <button id="nextBtn" class="next-btn">NEXT (পরবর্তী রুগী)</button>
+        <button class="btn-next" id="nextBtn" onclick="callNext()">NEXT (পরবর্তী রুগী)</button>
+        <button class="btn-reset" onclick="resetDoctorQueue()">শুধুমাত্র এই ডাক্তারের টিকেট রিসেট করুন</button>
     </div>
 
     <!-- Firebase SDKs -->
@@ -103,51 +157,93 @@
         }
 
         const db = firebase.database();
-        const doctorSelect = document.getElementById('doctorSelect');
-        const currentCallingElem = document.getElementById('currentCalling');
-        const nextBtn = document.getElementById('nextBtn');
+        let currentDoctorRef = null;
 
-        // সিলেক্ট করা ডাক্তারের ডাটা লাইভ আপডেট করা
-        function listenDoctorQueue() {
-            const doctorKey = doctorSelect.value;
-            
-            db.ref(`queue/${doctorKey}/current_calling`).on('value', (snapshot) => {
-                const val = snapshot.val() || 0;
-                currentCallingElem.innerText = '#' + String(val).padStart(3, '0');
+        // পেজ লোড হলে সেভ থাকা ডাক্তার নির্বাচন করবে
+        window.onload = function() {
+            const savedDoctor = localStorage.getItem('selected_doctor');
+            const doctorSelect = document.getElementById('doctorSelect');
+            if (savedDoctor && doctorSelect.querySelector(`option[value="${savedDoctor}"]`)) {
+                doctorSelect.value = savedDoctor;
+            }
+            listenDoctorData();
+        };
+
+        // ড্রপডাউন চেঞ্জ করলে লোকাল স্টোরেজে সেভ থাকবে
+        function onDoctorChange() {
+            const doctorSelect = document.getElementById('doctorSelect');
+            localStorage.setItem('selected_doctor', doctorSelect.value);
+            listenDoctorData();
+        }
+
+        // বর্তমান ডাক্তারের ডাটা সিঙ্ক
+        function listenDoctorData() {
+            const doctorKey = document.getElementById('doctorSelect').value;
+
+            if (currentDoctorRef) {
+                currentDoctorRef.off(); // আগের ডাক্তারের সিঙ্ক বন্ধ করা
+            }
+
+            currentDoctorRef = db.ref(`queue/${doctorKey}/current_calling`);
+            currentDoctorRef.on('value', (snapshot) => {
+                const callingVal = snapshot.val() || 0;
+                document.getElementById('calling-number').innerText = '#' + String(callingVal).padStart(3, '0');
             });
         }
 
-        // ড্রপডাউন চেঞ্জ করলে লাইভ ডাটা পরিবর্তন হবে
-        doctorSelect.addEventListener('change', () => {
-            // আগের লিসেনার অফ করে নতুন ডাক্তারের ডাটা ট্র্যাক
-            db.ref('queue').off();
-            listenDoctorQueue();
-        });
-
-        // NEXT বাটনে চাপ দিলে ফায়ারবেসে আপডেট
-        nextBtn.addEventListener('click', () => {
+        // NEXT বাটন প্রেস লজিক (ইস্যুকৃত টিকেটের চেয়ে বেশি যাবে না)
+        function callNext() {
+            const doctorSelect = document.getElementById('doctorSelect');
             const doctorKey = doctorSelect.value;
             const doctorName = doctorSelect.options[doctorSelect.selectedIndex].text;
 
-            db.ref(`queue/${doctorKey}/current_calling`).transaction((currentValue) => {
-                return (currentValue || 0) + 1;
-            }, (error, committed, snapshot) => {
-                if (committed) {
-                    const nextSerial = snapshot.val();
-                    
-                    // ওয়েটিং রুম ডিসপ্লকে এক জায়গায় ট্র্যাক রাখার জন্য 'last_called' ডাটা আপডেট
-                    db.ref('queue/last_called').set({
-                        doctorKey: doctorKey,
-                        doctorName: doctorName,
-                        serialNumber: nextSerial,
-                        timestamp: Date.now()
-                    });
-                }
-            });
-        });
+            const docRef = db.ref(`queue/${doctorKey}`);
 
-        // প্রথমবার পেজ লোড হলে
-        listenDoctorQueue();
+            docRef.once('value', (snapshot) => {
+                const data = snapshot.val() || {};
+                const totalIssued = data.total_issued || 0;
+                const currentCalling = data.current_calling || 0;
+
+                if (currentCalling >= totalIssued) {
+                    alert(`এই ডাক্তারের আর কোনো নতুন টিকেট ইস্যু করা হয়নি!\n(সর্বমোট টিকেট ইস্যু: ${totalIssued})`);
+                    return;
+                }
+
+                const nextSerial = currentCalling + 1;
+
+                // ১. ডাক্তারের নিজের বর্তমান নম্বর আপডেট
+                docRef.child('current_calling').set(nextSerial);
+
+                // ২. ডিসপ্লেতে ঘোষণার জন্য গ্লোবাল ডাটা আপডেট
+                db.ref('queue/last_called').set({
+                    doctorKey: doctorKey,
+                    doctorName: doctorName,
+                    serialNumber: nextSerial,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+            });
+        }
+
+        // নির্দিষ্ট ডাক্তারের টিকেট রিসেট লজিক
+        function resetDoctorQueue() {
+            const doctorSelect = document.getElementById('doctorSelect');
+            const doctorKey = doctorSelect.value;
+            const doctorName = doctorSelect.options[doctorSelect.selectedIndex].text;
+
+            const confirmReset = confirm(`আপনি কি নিশ্চিত যে "${doctorName}"-এর টিকেট কাউন্ট রিসেট করতে চান?`);
+            if (confirmReset) {
+                db.ref(`queue/${doctorKey}`).set({
+                    name: doctorName,
+                    total_issued: 0,
+                    current_calling: 0
+                }).then(() => {
+                    alert(`${doctorName}-এর টিকেট সফলতা সহকারে রিসেট হয়েছে।`);
+                }).catch((err) => {
+                    alert("রিসেট করতে সমস্যা হয়েছে!");
+                    console.error(err);
+                });
+            }
+        }
     </script>
 </body>
 </html>
