@@ -4,27 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ওয়েটিং রুম ডিসপ্লে - এলিট ডায়াগনস্টিক</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #000000;
+            color: #00FF00;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+        }
+        h1.title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+        p.subtitle {
+            font-size: 1.2rem;
+            color: #aaaaaa;
+            margin-bottom: 40px;
+        }
+        .label {
+            font-size: 2rem;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        #display-number {
+            font-size: 10rem;
+            font-weight: bold;
+            color: #00FF00;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+        }
+    </style>
 </head>
 <body>
 
-    <div class="kiosk-container" style="text-align: center; margin-top: 50px;">
-        <h1>এলিট ডায়াগনস্টিক সেন্টার এন্ড ফিজিওথেরাপি</h1>
-        <p>মার্ভেলাস টাওয়ার, ঢাকাদক্ষিণ রোড, গোলাপগঞ্জ, সিলেট।</p>
+    <div class="container">
+        <h1 class="title">এলিট ডায়াগনস্টিক সেন্টার এন্ড ফিজিওথেরাপি</h1>
+        <p class="subtitle">মার্ভেলাস টাওয়ার, ঢাকাদক্ষিণ রোড, গোলাপগঞ্জ, সিলেট।</p>
         
-        <hr style="margin: 30px 0; border: 1px solid #ccc;">
-
-        <h2>বর্তমান সিরিয়াল নম্বর</h2>
-        <h1 id="display-number" style="font-size: 5rem; color: #0066cc; margin: 20px 0;">#000</h1>
+        <div class="label">বর্তমান সিরিয়াল নম্বর</div>
+        <h1 id="display-number">#000</h1>
     </div>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-    <!-- ডিসপ্লে লজিক ও অডিও কোড -->
     <script>
-        // ১. ফায়ারবেস কনফিগারেশন
         const firebaseConfig = {
           apiKey: "AIzaSyCSAWE6NYMb1jeGpUoDA03Ak3ZqargJemo",
           authDomain: "elite-diagnostic-abf78.firebaseapp.com",
@@ -35,69 +69,56 @@
           appId: "1:631961470012:web:7cdd1ed8e39455b15d2f39"
         };
 
-        // ২. ফায়ারবেস শুরু করা
         if (typeof firebase !== 'undefined' && !firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
 
         const db = firebase.database();
 
-        // ৩. রিয়েলটাইম ডাটা সিঙ্ক (Next চাপলে সাথে সাথে এটি রান করবে)
         db.ref('queue/current_calling').on('value', (snapshot) => {
             const callingSerial = snapshot.val();
 
             if (callingSerial && callingSerial > 0) {
-                // ডিসপ্লে স্ক্রিনে নম্বর দেখানো
                 const numElem = document.getElementById('display-number');
                 if (numElem) {
                     numElem.innerText = '#' + String(callingSerial).padStart(3, '0');
                 }
 
-                // ডিং-ডং টোন ও ইংরেজি ভয়েস
-                playDingDongAndSpeak(callingSerial);
+                // শুধু ইকোসহ ডিং-ডং টোন বাজবে (কোনো ভয়েস থাকবে না)
+                playEchoDingDong();
             }
         });
 
-        // ৪. সাউন্ড ও ভয়েস ফাংশন
-        function playDingDongAndSpeak(serialNumber) {
+        // ইকো/রিভার্ব সহ ডিং-ডং সাউন্ড প্রসেসিং
+        function playEchoDingDong() {
             try {
                 const AudioCtx = window.AudioContext || window.webkitAudioContext;
                 const audioCtx = new AudioCtx();
 
-                // Ding Sound
+                // 1st Note (Ding - E5)
                 const osc1 = audioCtx.createOscillator();
                 const gain1 = audioCtx.createGain();
                 osc1.type = 'sine';
                 osc1.frequency.setValueAtTime(659.25, audioCtx.currentTime);
-                gain1.gain.setValueAtTime(0.4, audioCtx.currentTime);
-                gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                gain1.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1.2); // ইকো এফেক্টের জন্য টাইম বাড়ানো হয়েছে
                 osc1.connect(gain1);
                 gain1.connect(audioCtx.destination);
                 osc1.start(audioCtx.currentTime);
-                osc1.stop(audioCtx.currentTime + 0.5);
+                osc1.stop(audioCtx.currentTime + 1.2);
 
-                // Dong Sound
+                // 2nd Note (Dong - C5)
                 const osc2 = audioCtx.createOscillator();
                 const gain2 = audioCtx.createGain();
                 osc2.type = 'sine';
-                osc2.frequency.setValueAtTime(523.25, audioCtx.currentTime + 0.3);
-                gain2.gain.setValueAtTime(0.4, audioCtx.currentTime + 0.3);
-                gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.9);
+                osc2.frequency.setValueAtTime(523.25, audioCtx.currentTime + 0.4);
+                gain2.gain.setValueAtTime(0.5, audioCtx.currentTime + 0.4);
+                gain2.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 2.0); // লং রিকল ও ইকো রিলিজ
                 osc2.connect(gain2);
                 gain2.connect(audioCtx.destination);
-                osc2.start(audioCtx.currentTime + 0.3);
-                osc2.stop(audioCtx.currentTime + 0.9);
+                osc2.start(audioCtx.currentTime + 0.4);
+                osc2.stop(audioCtx.currentTime + 2.0);
 
-                // English Voice ("Next 1, 2, 3...")
-                setTimeout(() => {
-                    if ('speechSynthesis' in window) {
-                        window.speechSynthesis.cancel();
-                        const msg = new SpeechSynthesisUtterance(`Next ${serialNumber}`);
-                        msg.lang = 'en-US';
-                        msg.rate = 0.85;
-                        window.speechSynthesis.speak(msg);
-                    }
-                }, 850);
             } catch (e) {
                 console.error("Audio playback error:", e);
             }
