@@ -39,7 +39,7 @@ function generateTicket() {
     // ফরম্যাটিং (যেমন: #001)
     const formattedSerial = '#' + String(currentSerial).padStart(3, '0');
     
-    // তারিখ ও সময় (বাংলা ফরম্যাটে)
+    // তারিখ ও সময়
     const now = new Date();
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
     const formattedDateTime = now.toLocaleString('bn-BD', options);
@@ -48,7 +48,7 @@ function generateTicket() {
     document.getElementById('ticket-number').innerText = formattedSerial;
     document.getElementById('ticket-time').innerText = formattedDateTime;
 
-    // ১. ফায়ারবেস ডাটাবেজে মোট ইস্যুকৃত সিরিয়াল আপডেট
+    // ১. ফায়ারবেস ডাটাবেজে মোট টিকেট ও অবজেক্ট সেভ
     database.ref('queue/total_issued').set(currentSerial);
 
     // ২. প্রিন্ট কমান্ড
