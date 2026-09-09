@@ -1,41 +1,56 @@
-function generateTicket() {
-    // ১. আজকের তারিখ বের করা (YYYY-MM-DD ফরম্যাটে)
-    let today = new Date().toISOString().slice(0, 10);
-    
-    // LocalStorage থেকে আগের সেভ করা তারিখ ও সিরিয়াল নম্বর পড়া
-    let lastSavedDate = localStorage.getItem('lastTicketDate');
-    let currentNumber = localStorage.getItem('lastTicketNum') || 0;
+// Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyCSAWE6NYMb1jeGpUoDA03Ak3ZqargJemo",
+  authDomain: "elite-diagnostic-abf78.firebaseapp.com",
+  databaseURL: "https://elite-diagnostic-abf78-default-rtdb.firebaseio.com",
+  projectId: "elite-diagnostic-abf78",
+  storageBucket: "elite-diagnostic-abf78.firebasestorage.app",
+  messagingSenderId: "631961470012",
+  appId: "1:631961470012:web:7cdd1ed8e39455b15d2f39"
+};
 
-    // ২. তারিখ চেক করা: আজকের তারিখ যদি আগের সেভ করা তারিখের সমান না হয় (নতুন দিন হয়)
-    if (lastSavedDate !== today) {
-        currentNumber = 0; // নতুন দিন হলে সিরিয়াল রসেট করে ০ করে দেওয়া
-        localStorage.setItem('lastTicketDate', today); // নতুন তারিখ সেভ করা
+// Initialize Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const database = firebase.database();
+
+// বাংলা ডিজিট কনভার্টার
+function getBanglaNumber(num) {
+    const banglaDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+    return num.toString().split('').map(digit => banglaDigits[digit] || digit).join('');
+}
+
+function generateTicket() {
+    const today = new Date().toISOString().slice(0, 10);
+    const lastDate = localStorage.getItem('lastTicketDate');
+    let currentSerial = parseInt(localStorage.getItem('currentSerial') || '0', 10);
+
+    // দিন পরিবর্তন হলে সিরিয়াল ১ থেকে শুরু হবে
+    if (lastDate !== today) {
+        currentSerial = 1;
+        localStorage.setItem('lastTicketDate', today);
+    } else {
+        currentSerial += 1;
     }
 
-    // ৩. সিরিয়াল নম্বর ১ বাড়ানো
-    currentNumber = parseInt(currentNumber) + 1;
+    localStorage.setItem('currentSerial', currentSerial);
 
-    // ৪. আপডেট করা তথ্য LocalStorage-এ সেভ করা
-    localStorage.setItem('lastTicketNum', currentNumber);
-
-    // ৫. টিকেট ফরম্যাট করা (#001, #002...)
-    let formattedNum = "#" + String(currentNumber).padStart(3, '0');
-    document.getElementById('ticket-number').innerText = formattedNum;
-
-    // ৬. টিকেটে বর্তমান সময় ও বাংলা তারিখ প্রিন্ট করা
-    let now = new Date();
-    let dateStr = now.toLocaleDateString('bn-BD', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    }) + " | " + now.toLocaleTimeString('bn-BD', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-    });
+    // ফরম্যাটিং (যেমন: #001)
+    const formattedSerial = '#' + String(currentSerial).padStart(3, '0');
     
-    document.getElementById('ticket-time').innerText = dateStr;
+    // তারিখ ও সময় (বাংলা ফরম্যাটে)
+    const now = new Date();
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+    const formattedDateTime = now.toLocaleString('bn-BD', options);
 
-    // ৭. ব্রাউজারের প্রিন্ট ডায়ালগ চালু করা
+    // টিকেটের এলিমেন্টে ডাটা বসানো
+    document.getElementById('ticket-number').innerText = formattedSerial;
+    document.getElementById('ticket-time').innerText = formattedDateTime;
+
+    // ১. ফায়ারবেস ডাটাবেজে মোট ইস্যুকৃত সিরিয়াল আপডেট
+    database.ref('queue/total_issued').set(currentSerial);
+
+    // ২. প্রিন্ট কমান্ড
     window.print();
 }
