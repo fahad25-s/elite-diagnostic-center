@@ -60,7 +60,7 @@
         }
 
         /* =====================================================
-           RECENT CALLS - উপরের বড় বক্স
+           RECENT CALLS - উপরের ৩টি বক্স
            ===================================================== */
 
         .announcement-banner {
@@ -100,7 +100,7 @@
             transition: all 0.3s ease;
         }
 
-        /* সর্বশেষ কল Highlight */
+        /* সর্বশেষ ১ নম্বর কল Highlight */
         .recent-call.latest {
             border-color: #00FF00;
             box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
@@ -170,10 +170,7 @@
             color: #00FF00;
         }
 
-        /* =====================================================
-           MOBILE / SMALL SCREEN
-           ===================================================== */
-
+        /* Mobile View */
         @media (max-width: 900px) {
             body { padding: 10px; }
             header h1 { font-size: 1.5rem; }
@@ -189,35 +186,25 @@
 
 <body>
 
-    <!-- অডিও অ্যাক্টিভ করার জন্য নোটিশ -->
     <div id="audioNotice" onclick="unlockAudio()">🔊 সাউন্ড চালু করতে স্ক্রিনের যেকোনো স্থানে চাপ দিন / ক্লিক করুন</div>
 
-    <!-- HEADER -->
     <header>
         <h1>এলিট ডায়াগনস্টিক সেন্টার এন্ড ফিজিওথেরাপি</h1>
         <p>মার্ভেলাস টাওয়ার, ঢাকাদক্ষিণ রোড, গোলাপগঞ্জ, সিলেট।</p>
         <div class="live-clock" id="liveClock">--:--:--</div>
     </header>
 
-    <!-- RECENT 3 CALLS -->
     <div class="announcement-banner">
         <h3>সর্বশেষ কল</h3>
-        <div class="recent-calls" id="recentCalls">
-            <!-- JavaScript এখানে ৩টি কল দেখাবে -->
-        </div>
+        <div class="recent-calls" id="recentCalls"></div>
     </div>
 
-    <!-- DOCTORS REALTIME STATUS -->
     <div class="doctors-grid" id="doctorsGrid"></div>
 
-    <!-- FIREBASE LIBRARIES -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        /* =====================================================
-           FIREBASE CONFIG
-           ===================================================== */
         const firebaseConfig = {
             apiKey: "AIzaSyCSAWE6NYMb1jeGpUoDA03Ak3ZqargJemo",
             authDomain: "elite-diagnostic-abf78.firebaseapp.com",
@@ -234,9 +221,6 @@
 
         const db = firebase.database();
 
-        /* =====================================================
-           DOCTORS LIST
-           ===================================================== */
         const doctorsList = [
             { key: 'doctor_1', name: 'ডাঃ সারওয়ার আহমদ জয়' },
             { key: 'doctor_2', name: 'ডাঃ সাদিয়া জান্নাত' },
@@ -250,17 +234,11 @@
         let recentCalls = [];
         let audioCtx = null;
 
-        /* =====================================================
-           ENGLISH TO BENGALI NUMBER CONVERTER
-           ===================================================== */
         function toBengaliNumber(num) {
             const bengaliDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
             return String(num).replace(/\d/g, digit => bengaliDigits[digit]);
         }
 
-        /* =====================================================
-           LIVE CLOCK
-           ===================================================== */
         function updateClock() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('bn-BD', { hour12: true });
@@ -269,21 +247,12 @@
         }
         setInterval(updateClock, 1000);
 
-        /* =====================================================
-           AUDIO SYSTEM
-           ===================================================== */
         function unlockAudio() {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 if (!AudioContext) return;
-
-                if (!audioCtx) {
-                    audioCtx = new AudioContext();
-                }
-
-                if (audioCtx.state === 'suspended') {
-                    audioCtx.resume();
-                }
+                if (!audioCtx) audioCtx = new AudioContext();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
 
                 const notice = document.getElementById('audioNotice');
                 if (notice) notice.style.display = 'none';
@@ -299,7 +268,6 @@
 
                 const now = audioCtx.currentTime;
 
-                // First Note - Ding
                 const osc1 = audioCtx.createOscillator();
                 const gain1 = audioCtx.createGain();
                 osc1.type = 'sine';
@@ -312,7 +280,6 @@
                 osc1.start(now);
                 osc1.stop(now + 1.8);
 
-                // Second Note - Dong
                 const osc2 = audioCtx.createOscillator();
                 const gain2 = audioCtx.createGain();
                 osc2.type = 'sine';
@@ -329,9 +296,6 @@
             }
         }
 
-        /* =====================================================
-           RENDER CARDS & RECENT CALLS
-           ===================================================== */
         function renderCards() {
             const grid = document.getElementById('doctorsGrid');
             grid.innerHTML = '';
@@ -352,43 +316,30 @@
             const container = document.getElementById('recentCalls');
             container.innerHTML = '';
 
-            if (recentCalls.length === 0) {
-                for (let i = 0; i < 3; i++) {
-                    container.innerHTML += `
-                        <div class="recent-call">
-                            <div class="doc-name">অপেক্ষমাণ</div>
-                            <div class="serial-no">#০০০</div>
-                        </div>
-                    `;
-                }
-                return;
-            }
-
-            recentCalls.slice(0, 3).forEach((call, index) => {
+            // সাম্প্রতিক ৩টি কলের ডেটা রেন্ডার
+            for (let i = 0; i < 3; i++) {
+                const call = recentCalls[i];
                 const card = document.createElement('div');
                 card.className = 'recent-call';
-                if (index === 0) card.classList.add('latest');
 
-                const serialFormatted = toBengaliNumber(String(call.serialNumber).padStart(3, '0'));
-
-                card.innerHTML = `
-                    <div class="doc-name">${call.doctorName}</div>
-                    <div class="serial-no">#${serialFormatted}</div>
-                `;
+                if (call) {
+                    if (i === 0) card.classList.add('latest');
+                    const serialFormatted = toBengaliNumber(String(call.serialNumber).padStart(3, '0'));
+                    card.innerHTML = `
+                        <div class="doc-name">${call.doctorName}</div>
+                        <div class="serial-no">#${serialFormatted}</div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <div class="doc-name">অপেক্ষমাণ</div>
+                        <div class="serial-no">#০০০</div>
+                    `;
+                }
                 container.appendChild(card);
-            });
-
-            while (container.children.length < 3) {
-                const emptyCard = document.createElement('div');
-                emptyCard.className = 'recent-call';
-                emptyCard.innerHTML = `
-                    <div class="doc-name">অপেক্ষমাণ</div>
-                    <div class="serial-no">#০০০</div>
-                `;
-                container.appendChild(emptyCard);
             }
         }
 
+        // ইউনিক ডাক্তার লজিক দিয়ে আপডেট করা ফাংশন
         function addRecentCall(data) {
             if (!data || !data.doctorName || !data.serialNumber) return;
 
@@ -398,20 +349,18 @@
                 serialNumber: Number(data.serialNumber)
             };
 
-            if (recentCalls.length > 0 &&
-                recentCalls[0].doctorKey === newCall.doctorKey &&
-                recentCalls[0].serialNumber === newCall.serialNumber) {
-                return;
-            }
+            // যদি এই ডাক্তার আগের লিস্টে থেকে থাকেন, তবে তার আগের এন্ট্রিটা মুছে ফেলা হবে
+            recentCalls = recentCalls.filter(call => call.doctorKey !== newCall.doctorKey);
 
+            // নতুন কলটিকে একদম প্রথমে যুক্ত করা
             recentCalls.unshift(newCall);
+
+            // সর্বোচ্চ ৩ জন ইউনিক ডাক্তারকে রাখা
             recentCalls = recentCalls.slice(0, 3);
+
             renderRecentCalls();
         }
 
-        /* =====================================================
-           INITIALIZE DISPLAY
-           ===================================================== */
         function initDisplay() {
             renderCards();
             renderRecentCalls();
@@ -440,7 +389,7 @@
                         playEchoDingDong();
                         addRecentCall(data);
 
-                        // Highlight Active Doctor Card
+                        // Highlight Active Doctor Card in Main Grid
                         document.querySelectorAll('.doctor-card').forEach(card => card.classList.remove('active'));
                         const activeCard = document.getElementById(`card-${data.doctorKey}`);
                         if (activeCard) {
@@ -452,9 +401,6 @@
             });
         }
 
-        /* =====================================================
-           LISTENERS
-           ===================================================== */
         document.addEventListener('click', unlockAudio);
         document.addEventListener('touchstart', unlockAudio);
 
