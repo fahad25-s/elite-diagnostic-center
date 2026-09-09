@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ডাক্তার প্যানেল - এলিট ডায়াগনস্টিক</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #eef2f5; padding: 20px; }
+        .card { background: white; max-width: 400px; margin: 30px auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { color: #333; margin-top: 0; }
+        .number-box { font-size: 50px; font-weight: bold; color: #28a745; margin: 15px 0; }
+        .info { font-size: 16px; color: #666; margin-bottom: 20px; }
+        .btn { background: #28a745; color: white; border: none; padding: 15px 30px; font-size: 20px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
+        .btn:active { background: #218838; }
+        .reset-btn { background: #dc3545; margin-top: 15px; font-size: 14px; padding: 8px 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>ডাক্তার রুম কন্ট্রোল</h2>
+        <p class="info">বর্তমানে রুমে রোগী সিরিয়াল:</p>
+        <div id="calling-number" class="number-box">#০০০</div>
+        <p class="info">মোট টিকেট দেওয়া হয়েছে: <b id="total-issued">০</b></p>
+        
+        <button class="btn" onclick="nextPatient()">পরবর্তী রোগী ডাকুন (Next)</button>
+        <br>
+        <button class="btn reset-btn" onclick="resetQueue()">আজকের সিরিয়াল রিসেট</button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyCSAWE6NYMb1jeGpUoDA03Ak3ZqargJemo",
+          authDomain: "elite-diagnostic-abf78.firebaseapp.com",
+          databaseURL: "https://elite-diagnostic-abf78-default-rtdb.firebaseio.com",
+          projectId: "elite-diagnostic-abf78",
+          storageBucket: "elite-diagnostic-abf78.firebasestorage.app",
+          messagingSenderId: "631961470012",
+          appId: "1:631961470012:web:7cdd1ed8e39455b15d2f39"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        let currentCalling = 0;
+        let totalIssued = 0;
+
+        // ডাটাবেজ থেকে রিয়েল-টাইম ডাটা রিড করা
+        database.ref('queue').on('value', (snapshot) => {
+            const data = snapshot.val() || {};
+            currentCalling = data.current_calling || 0;
+            totalIssued = data.total_issued || 0;
+
+            document.getElementById('calling-number').innerText = '#' + String(currentCalling).padStart(3, '0');
+            document.getElementById('total-issued').innerText = totalIssued;
+        });
+
+        function nextPatient() {
+            if (currentCalling < totalIssued) {
+                currentCalling += 1;
+                database.ref('queue/current_calling').set(currentCalling);
+            } else {
+                alert("আর কোনো রোগী অপেক্ষমাণ নেই!");
+            }
+        }
+
+        function resetQueue() {
+            if(confirm("আপনি কি আজকের সিরিয়াল রিসেট করতে চান?")) {
+                database.ref('queue').set({
+                    current_calling: 0,
+                    total_issued: 0
+                });
+            }
+        }
+    </script>
+</body>
+</html>
