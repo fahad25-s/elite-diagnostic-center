@@ -42,39 +42,55 @@ function generateTicket() {
             if (numElem) numElem.innerText = formattedSerial;
             if (timeElem) timeElem.innerText = formattedDateTime;
 
-            // অডিও সাউন্ড এবং ভয়েস প্লে
-            playAudioSequence(currentSerial);
-
-            // টিকেট প্রিন্ট সংকেত
-            window.print();
+            // অডিও এবং ভয়েস প্লে করার পর প্রিন্ট কমান্ড রান হবে
+            playToneAndVoice(currentSerial, () => {
+                window.print();
+            });
         }
     });
 }
 
-function playAudioSequence(serialNumber) {
-    // সাউন্ড বেল প্লে করা
-    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+function playToneAndVoice(serialNumber, callback) {
+    // অডিও ওয়েবসাইট পেজে কোনো বাধা ছাড়া তৈরি করা
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     
-    audio.play().then(() => {
-        // বেল বাজার পর ভয়েস
-        setTimeout(() => {
-            speakBengali(serialNumber);
-        }, 600);
-    }).catch(err => {
-        console.warn("Audio autoplay error, playing speech directly:", err);
-        // সাউন্ড ব্লক থাকলে সরাসরি ভয়েস অ্যানাউন্স করবে
-        speakBengali(serialNumber);
-    });
-}
+    // ১. একটি বিফ/টোন সাউন্ড তৈরি করা (কোনো এক্সটার্নাল ফাইলের ওপর নির্ভরতা ছাড়া)
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, audioContext.currentTime); // D5 note
+    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+    
+    osc.start();
+    osc.stop(audioContext.currentTime + 0.3); // ০.৩ সেকেন্ডের সুন্দর টোন
 
-function speakBengali(serialNumber) {
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // আগের কোনো বক্তব্য থাকলে ক্লিয়ার করা
-        
-        const utterance = new SpeechSynthesisUtterance(`আপনার টিকেট নম্বর ${serialNumber}`);
-        utterance.lang = 'bn-BD';
-        utterance.rate = 0.85;
+    // ২. টোন বাজার পর ভয়েস দেওয়া
+    setTimeout(() => {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
 
-        window.speechSynthesis.speak(utterance);
-    }
+            const text = `আপনার টিকেট নম্বর ${serialNumber}`;
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            // ভাষা সেটআপ
+            utterance.lang = 'bn-BD';
+            utterance.rate = 0.8;
+
+            // ভয়েস শেষ হলে প্রিন্ট অপশন চালু হবে
+            utterance.onend = function() {
+                if (callback) callback();
+            };
+
+            utterance.onerror = function() {
+                if (callback) callback();
+            };
+
+            window.speechSynthesis.speak(utterance);
+        } else {
+            if (callback) callback();
+        }
+    }, 400);
 }
