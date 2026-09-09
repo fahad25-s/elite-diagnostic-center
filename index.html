@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>টিকেট কিওস্ক</title>
+    <title>টিকেট কিওস্ক - এলিট ডায়াগনস্টিক</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,6 +11,7 @@
     <div class="kiosk-container">
         <h1>এলিট ডায়াগনস্টিক সেন্টার এন্ড ফিজিওথেরাপি</h1>
         <p>মার্ভেলাস টাওয়ার, ঢাকাদক্ষিণ রোড, গোলাপগঞ্জ, সিলেট।</p>
+        <p>মোবাইলঃ- ০১৩৩৭-২৭৩০৮৩</p>
         <button id="printBtn" onclick="generateTicket()">টিকেট নিন</button>
     </div>
 
@@ -23,7 +24,7 @@
         </div>
 
         <div class="serial-section">
-            <p class="serial-label">সিরিয়াল নম্বর</p>
+            <p class="serial-label">সিরিয়াল নাম্বার</p>
             <h1 id="ticket-number">#000</h1>
         </div>
 
@@ -33,9 +34,59 @@
         </div>
     </div>
 
-    <!-- Firebase SDK (CDN) -->
+    <!-- Firebase SDK (Version 8) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="script.js"></script>
+
+    <script>
+        // Firebase Config
+        const firebaseConfig = {
+          apiKey: "AIzaSyCSAWE6NYMb1jeGpUoDA03Ak3ZqargJemo",
+          authDomain: "elite-diagnostic-abf78.firebaseapp.com",
+          databaseURL: "https://elite-diagnostic-abf78-default-rtdb.firebaseio.com",
+          projectId: "elite-diagnostic-abf78",
+          storageBucket: "elite-diagnostic-abf78.firebasestorage.app",
+          messagingSenderId: "631961470012",
+          appId: "1:631961470012:web:7cdd1ed8e39455b15d2f39"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+
+        function generateTicket() {
+            const today = new Date().toISOString().slice(0, 10);
+            const lastDate = localStorage.getItem('lastTicketDate');
+            let currentSerial = parseInt(localStorage.getItem('currentSerial') || '0', 10);
+
+            if (lastDate !== today) {
+                currentSerial = 1;
+                localStorage.setItem('lastTicketDate', today);
+            } else {
+                currentSerial += 1;
+            }
+
+            localStorage.setItem('currentSerial', currentSerial);
+
+            const formattedSerial = '#' + String(currentSerial).padStart(3, '0');
+            
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+            const formattedDateTime = now.toLocaleString('bn-BD', options);
+
+            document.getElementById('ticket-number').innerText = formattedSerial;
+            document.getElementById('ticket-time').innerText = formattedDateTime;
+
+            // ফায়ারবেসে ডাটা সরাসরি সেভ করা
+            database.ref('queue').update({
+                total_issued: currentSerial
+            });
+
+            // প্রিন্ট ডায়ালগ অন
+            window.print();
+        }
+    </script>
 </body>
 </html>
