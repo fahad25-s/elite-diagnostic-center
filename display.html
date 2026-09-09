@@ -1,78 +1,107 @@
-// ১. ফায়ারবেস কনফিগারেশন
-const firebaseConfig = {
-  apiKey: "AIzaSyCSAWE6NYMb1jeGpUoDA03Ak3ZqargJemo",
-  authDomain: "elite-diagnostic-abf78.firebaseapp.com",
-  databaseURL: "https://elite-diagnostic-abf78-default-rtdb.firebaseio.com",
-  projectId: "elite-diagnostic-abf78",
-  storageBucket: "elite-diagnostic-abf78.firebasestorage.app",
-  messagingSenderId: "631961470012",
-  appId: "1:631961470012:web:7cdd1ed8e39455b15d2f39"
-};
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ওয়েটিং রুম ডিসপ্লে - এলিট ডায়াগনস্টিক</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-// ২. ফায়ারবেস শুরু করা
-if (typeof firebase !== 'undefined' && !firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+    <div class="kiosk-container" style="text-align: center; margin-top: 50px;">
+        <h1>এলিট ডায়াগনস্টিক সেন্টার এন্ড ফিজিওথেরাপি</h1>
+        <p>মার্ভেলাস টাওয়ার, ঢাকাদক্ষিণ রোড, গোলাপগঞ্জ, সিলেট।</p>
+        
+        <hr style="margin: 30px 0; border: 1px solid #ccc;">
 
-const db = firebase.database();
+        <h2>বর্তমান সিরিয়াল নম্বর</h2>
+        <h1 id="display-number" style="font-size: 5rem; color: #0066cc; margin: 20px 0;">#000</h1>
+    </div>
 
-// ৩. ফায়ারবেস থেকে রিয়েলটাইম ডাটা সিঙ্ক (Next বাটনে চাপলে রান হবে)
-db.ref('queue/current_calling').on('value', (snapshot) => {
-    const callingSerial = snapshot.val();
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-    if (callingSerial && callingSerial > 0) {
-        // ডিসপ্লে স্ক্রিনে নম্বর দেখানো
-        const numElem = document.getElementById('display-number');
-        if (numElem) {
-            numElem.innerText = '#' + String(callingSerial).padStart(3, '0');
+    <!-- ডিসপ্লে লজিক ও অডিও কোড -->
+    <script>
+        // ১. ফায়ারবেস কনফিগারেশন
+        const firebaseConfig = {
+          apiKey: "AIzaSyCSAWE6NYMb1jeGpUoDA03Ak3ZqargJemo",
+          authDomain: "elite-diagnostic-abf78.firebaseapp.com",
+          databaseURL: "https://elite-diagnostic-abf78-default-rtdb.firebaseio.com",
+          projectId: "elite-diagnostic-abf78",
+          storageBucket: "elite-diagnostic-abf78.firebasestorage.app",
+          messagingSenderId: "631961470012",
+          appId: "1:631961470012:web:7cdd1ed8e39455b15d2f39"
+        };
+
+        // ২. ফায়ারবেস শুরু করা
+        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
 
-        // ডিং-ডং টোন ও ইংরেজি ভয়েস
-        playDingDongAndSpeak(callingSerial);
-    }
-});
+        const db = firebase.database();
 
-// ৪. সাউন্ড ও ভয়েস ফাংশন
-function playDingDongAndSpeak(serialNumber) {
-    try {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        const audioCtx = new AudioCtx();
+        // ৩. রিয়েলটাইম ডাটা সিঙ্ক (Next চাপলে সাথে সাথে এটি রান করবে)
+        db.ref('queue/current_calling').on('value', (snapshot) => {
+            const callingSerial = snapshot.val();
 
-        // Ding Sound
-        const osc1 = audioCtx.createOscillator();
-        const gain1 = audioCtx.createGain();
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(659.25, audioCtx.currentTime);
-        gain1.gain.setValueAtTime(0.4, audioCtx.currentTime);
-        gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-        osc1.connect(gain1);
-        gain1.connect(audioCtx.destination);
-        osc1.start(audioCtx.currentTime);
-        osc1.stop(audioCtx.currentTime + 0.5);
+            if (callingSerial && callingSerial > 0) {
+                // ডিসপ্লে স্ক্রিনে নম্বর দেখানো
+                const numElem = document.getElementById('display-number');
+                if (numElem) {
+                    numElem.innerText = '#' + String(callingSerial).padStart(3, '0');
+                }
 
-        // Dong Sound
-        const osc2 = audioCtx.createOscillator();
-        const gain2 = audioCtx.createGain();
-        osc2.type = 'sine';
-        osc2.frequency.setValueAtTime(523.25, audioCtx.currentTime + 0.3);
-        gain2.gain.setValueAtTime(0.4, audioCtx.currentTime + 0.3);
-        gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.9);
-        osc2.connect(gain2);
-        gain2.connect(audioCtx.destination);
-        osc2.start(audioCtx.currentTime + 0.3);
-        osc2.stop(audioCtx.currentTime + 0.9);
-
-        // English Voice
-        setTimeout(() => {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const msg = new SpeechSynthesisUtterance(`Next ${serialNumber}`);
-                msg.lang = 'en-US';
-                msg.rate = 0.85;
-                window.speechSynthesis.speak(msg);
+                // ডিং-ডং টোন ও ইংরেজি ভয়েস
+                playDingDongAndSpeak(callingSerial);
             }
-        }, 850);
-    } catch (e) {
-        console.error("Audio playback error:", e);
-    }
-}
+        });
+
+        // ৪. সাউন্ড ও ভয়েস ফাংশন
+        function playDingDongAndSpeak(serialNumber) {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const audioCtx = new AudioCtx();
+
+                // Ding Sound
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(659.25, audioCtx.currentTime);
+                gain1.gain.setValueAtTime(0.4, audioCtx.currentTime);
+                gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start(audioCtx.currentTime);
+                osc1.stop(audioCtx.currentTime + 0.5);
+
+                // Dong Sound
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(523.25, audioCtx.currentTime + 0.3);
+                gain2.gain.setValueAtTime(0.4, audioCtx.currentTime + 0.3);
+                gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.9);
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+                osc2.start(audioCtx.currentTime + 0.3);
+                osc2.stop(audioCtx.currentTime + 0.9);
+
+                // English Voice ("Next 1, 2, 3...")
+                setTimeout(() => {
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                        const msg = new SpeechSynthesisUtterance(`Next ${serialNumber}`);
+                        msg.lang = 'en-US';
+                        msg.rate = 0.85;
+                        window.speechSynthesis.speak(msg);
+                    }
+                }, 850);
+            } catch (e) {
+                console.error("Audio playback error:", e);
+            }
+        }
+    </script>
+</body>
+</html>
