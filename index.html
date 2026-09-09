@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>টিকেট</title>
+    <title>টিকেট কিওস্ক</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,7 +11,6 @@
     <div class="kiosk-container">
         <h1>এলিট ডায়াগনস্টিক সেন্টার এন্ড ফিজিওথেরাপি</h1>
         <p>মার্ভেলাস টাওয়ার, ঢাকাদক্ষিণ রোড, গোলাপগঞ্জ, সিলেট।</p>
-        <p>মোবাইলঃ- ০১৩৩৭-২৭৩০৮৩</p>
         <button id="printBtn" onclick="generateTicket()">টিকেট নিন</button>
     </div>
 
@@ -24,8 +23,8 @@
         </div>
 
         <div class="serial-section">
-            <p class="serial-label">সিরিয়াল নাম্বার</p>
-            <h1 id="ticket-number">#001</h1>
+            <p class="serial-label">সিরিয়াল নম্বর</p>
+            <h1 id="ticket-number">#000</h1>
         </div>
 
         <div class="footer-section">
@@ -34,6 +33,9 @@
         </div>
     </div>
 
+    <!-- Firebase SDK (CDN) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
