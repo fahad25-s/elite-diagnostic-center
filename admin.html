@@ -20,8 +20,8 @@
     <div class="card">
         <h2>ডাক্তার রুম কন্ট্রোল</h2>
         <p class="info">বর্তমানে রুমে রোগী সিরিয়াল:</p>
-        <div id="calling-number" class="number-box">#০০০</div>
-        <p class="info">মোট টিকেট দেওয়া হয়েছে: <b id="total-issued">০</b></p>
+        <div id="calling-number" class="number-box">#000</div>
+        <p class="info">মোট টিকেট দেওয়া হয়েছে: <b id="total-issued">0</b></p>
         
         <button class="btn" onclick="nextPatient()">পরবর্তী রোগী ডাকুন (Next)</button>
         <br>
@@ -46,7 +46,7 @@
         let currentCalling = 0;
         let totalIssued = 0;
 
-        // ডাটাবেজ থেকে রিয়েল-টাইম ডাটা রিড করা
+        // ফায়ারবেস থেকে রিয়েল-টাইম ডাটা রিড করা
         database.ref('queue').on('value', (snapshot) => {
             const data = snapshot.val() || {};
             currentCalling = data.current_calling || 0;
@@ -59,7 +59,9 @@
         function nextPatient() {
             if (currentCalling < totalIssued) {
                 currentCalling += 1;
-                database.ref('queue/current_calling').set(currentCalling);
+                database.ref('queue').update({
+                    current_calling: currentCalling
+                });
             } else {
                 alert("আর কোনো রোগী অপেক্ষমাণ নেই!");
             }
@@ -71,6 +73,7 @@
                     current_calling: 0,
                     total_issued: 0
                 });
+                localStorage.setItem('currentSerial', '0');
             }
         }
     </script>
