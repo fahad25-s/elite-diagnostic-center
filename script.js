@@ -22,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function generateTicket() {
-    // ফায়ারবেস থেকে সরাসরি বর্তমান সর্বোচ্চ সিরিয়াল নিয়ে কাজ করা
     db.ref('queue/total_issued').transaction((currentValue) => {
         return (currentValue || 0) + 1;
     }, (error, committed, snapshot) => {
@@ -37,11 +36,52 @@ function generateTicket() {
             const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
             const formattedDateTime = now.toLocaleString('bn-BD', options);
 
-            document.getElementById('ticket-number').innerText = formattedSerial;
-            document.getElementById('ticket-time').innerText = formattedDateTime;
+            const numElem = document.getElementById('ticket-number');
+            const timeElem = document.getElementById('ticket-time');
+
+            if (numElem) numElem.innerText = formattedSerial;
+            if (timeElem) timeElem.innerText = formattedDateTime;
+
+            // অটোমেটিক টিউন ও ভয়েস অ্যানাউন্সমেন্ট
+            playToneAndVoice(currentSerial);
 
             // টিকেট প্রিন্ট সংকেত
             window.print();
         }
     });
+}
+
+// সাউন্ড ও ভয়েস প্লে করার ফাংশন
+function playToneAndVoice(serialNumber) {
+    const bellAudio = document.getElementById('bellSound');
+    
+    // ১. প্রথমে টিউন বাজানো
+    if (bellAudio) {
+        bellAudio.currentTime = 0;
+        bellAudio.play().then(() => {
+            // টিউন শেষ হলে ভয়েস কল
+            setTimeout(() => {
+                speakSerial(serialNumber);
+            }, 800);
+        }).catch(() => {
+            // সাউন্ড প্লে না হলে সরাসরি ভয়েস
+            speakSerial(serialNumber);
+        });
+    } else {
+        speakSerial(serialNumber);
+    }
+}
+
+// বাংলায় ভয়েস অ্যানাউন্সমেন্ট ফাংশন
+function speakSerial(serialNumber) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // আগের কোনো অ্যানাউন্সমেন্ট থাকলে তা বন্ধ করা
+
+        const speechText = `আপনার টিকেট নম্বর ${serialNumber}`;
+        const utterance = new SpeechSynthesisUtterance(speechText);
+        utterance.lang = 'bn-BD';
+        utterance.rate = 0.85; // সাবলীল গতি
+
+        window.speechSynthesis.speak(utterance);
+    }
 }
