@@ -42,8 +42,8 @@ function generateTicket() {
             if (numElem) numElem.innerText = formattedSerial;
             if (timeElem) timeElem.innerText = formattedDateTime;
 
-            // অটোমেটিক টিউন ও ভয়েস অ্যানাউন্সমেন্ট
-            playToneAndVoice(currentSerial);
+            // অডিও সাউন্ড এবং ভয়েস প্লে
+            playAudioSequence(currentSerial);
 
             // টিকেট প্রিন্ট সংকেত
             window.print();
@@ -51,36 +51,29 @@ function generateTicket() {
     });
 }
 
-// সাউন্ড ও ভয়েস প্লে করার ফাংশন
-function playToneAndVoice(serialNumber) {
-    const bellAudio = document.getElementById('bellSound');
+function playAudioSequence(serialNumber) {
+    // সাউন্ড বেল প্লে করা
+    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
     
-    // ১. প্রথমে টিউন বাজানো
-    if (bellAudio) {
-        bellAudio.currentTime = 0;
-        bellAudio.play().then(() => {
-            // টিউন শেষ হলে ভয়েস কল
-            setTimeout(() => {
-                speakSerial(serialNumber);
-            }, 800);
-        }).catch(() => {
-            // সাউন্ড প্লে না হলে সরাসরি ভয়েস
-            speakSerial(serialNumber);
-        });
-    } else {
-        speakSerial(serialNumber);
-    }
+    audio.play().then(() => {
+        // বেল বাজার পর ভয়েস
+        setTimeout(() => {
+            speakBengali(serialNumber);
+        }, 600);
+    }).catch(err => {
+        console.warn("Audio autoplay error, playing speech directly:", err);
+        // সাউন্ড ব্লক থাকলে সরাসরি ভয়েস অ্যানাউন্স করবে
+        speakBengali(serialNumber);
+    });
 }
 
-// বাংলায় ভয়েস অ্যানাউন্সমেন্ট ফাংশন
-function speakSerial(serialNumber) {
+function speakBengali(serialNumber) {
     if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel(); // আগের কোনো অ্যানাউন্সমেন্ট থাকলে তা বন্ধ করা
-
-        const speechText = `আপনার টিকেট নম্বর ${serialNumber}`;
-        const utterance = new SpeechSynthesisUtterance(speechText);
+        window.speechSynthesis.cancel(); // আগের কোনো বক্তব্য থাকলে ক্লিয়ার করা
+        
+        const utterance = new SpeechSynthesisUtterance(`আপনার টিকেট নম্বর ${serialNumber}`);
         utterance.lang = 'bn-BD';
-        utterance.rate = 0.85; // সাবলীল গতি
+        utterance.rate = 0.85;
 
         window.speechSynthesis.speak(utterance);
     }
