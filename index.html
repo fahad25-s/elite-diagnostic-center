@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>টিকেট কিয়োস্ক - এলিট ডায়াগনস্টিক</title>
+    <title>টিকেট কিওস্ক - এলিট ডায়াগনস্টিক</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="kiosk-container" style="max-width: 400px; margin: 50px auto; text-align: center; font-family: sans-serif;">
-        <h2>এলিট ডায়াগনস্টিক সেন্টার</h2>
-        <p>টিকেট সংগ্রহ করুন</p>
+    <div class="kiosk-container">
+        <h1>এলিট ডায়াগনস্টিক সেন্টার এন্ড ফিজিওথেরাপি</h1>
+        <p>মার্ভেলাস টাওয়ার, ঢাকাদক্ষিণ রোড, গোলাপগঞ্জ, সিলেট।</p>
         
-        <hr style="margin: 20px 0;">
+        <hr style="margin: 20px 0; border: 0.5px solid #ccc;">
 
-        <!-- ডাক্তার সিলেক্ট করার আপডেটেড ড্রপডাউন -->
+        <!-- ১. ডাক্তার সিলেক্ট করার ড্রপডাউন (যুক্ত করা হয়েছে) -->
         <div style="margin-bottom: 20px; text-align: left;">
-            <label for="doctorSelect" style="font-weight: bold; display: block; margin-bottom: 5px;">ডাক্তার নির্বাচন করুন:</label>
-            <select id="doctorSelect" style="width: 100%; padding: 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #ccc;">
+            <label for="doctorSelect" style="font-weight: bold; display: block; margin-bottom: 8px;">ডাক্তার নির্বাচন করুন:</label>
+            <select id="doctorSelect" style="width: 100%; padding: 12px; font-size: 1rem; border-radius: 6px; border: 1px solid #ccc;">
                 <option value="doctor_1">ডাঃ সারওয়ার আহমদ জয়</option>
                 <option value="doctor_2">ডাঃ সাদিয়া জান্নাত</option>
                 <option value="doctor_3">ডাঃ আমিনা খাতুন</option>
@@ -28,23 +27,35 @@
             </select>
         </div>
 
-        <button id="printBtn" style="padding: 12px 25px; font-size: 1.2rem; background-color: #0066cc; color: white; border: none; border-radius: 5px; cursor: pointer;">
-            টিকেট নিন
-        </button>
+        <button id="printBtn">টিকেট নিন</button>
+    </div>
 
-        <!-- প্রিন্ট এরিয়া (টিকেট রসিদ) -->
-        <div id="printable-ticket" style="margin-top: 30px; border: 1px dashed #000; padding: 15px; display: inline-block; width: 100%; box-sizing: border-box;">
-            <h3 style="margin: 5px 0;">এলিট ডায়াগনস্টিক সেন্টার</h3>
-            <p id="ticket-doctor" style="font-weight: bold; margin: 5px 0;">-</p>
-            <h1 id="ticket-number" style="font-size: 3rem; margin: 10px 0;">#000</h1>
-            <p id="ticket-time" style="font-size: 0.85rem; color: #555; margin: 5px 0;">-</p>
+    <!-- থার্মাল প্রিন্ট ভিউ -->
+    <div id="ticket-template" class="printable">
+        <div class="header-section">
+            <h2 class="brand-title">এলিট ডায়াগনস্টিক সেন্টার এন্ড ফিজিওথেরাপি</h2>
+            <p class="address">মার্ভেলাস টাওয়ার, ঢাকাদক্ষিণ রোড, গোলাপগঞ্জ, সিলেট।</p>
+        </div>
+
+        <!-- ২. টিকেটে ডাক্তারের নাম প্রিন্ট হওয়ার এলিমেন্ট (যুক্ত করা হয়েছে) -->
+        <div style="text-align: center; margin: 10px 0;">
+            <p id="ticket-doctor" style="font-size: 1.1rem; font-weight: bold; margin: 5px 0;"></p>
+        </div>
+
+        <div class="serial-section">
+            <p class="serial-label">সিরিয়াল নাম্বার</p>
+            <h1 id="ticket-number">#000</h1>
+        </div>
+
+        <div class="footer-section">
+            <p id="ticket-time" class="time-stamp"></p>
+            <p class="thank-you">ধন্যবাদ, আমাদের সাথে থাকুন</p>
         </div>
     </div>
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
     <script src="script.js"></script>
 </body>
 </html>
